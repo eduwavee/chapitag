@@ -16,7 +16,7 @@ export default async function PanelHomePage() {
         <h1 className="font-heading text-2xl font-bold dark:text-white">Mis mascotas</h1>
         <Link
           href="/panel/mascotas/nueva"
-          className="rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700"
+          className="press-scale rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700"
         >
           + Registrar mascota
         </Link>

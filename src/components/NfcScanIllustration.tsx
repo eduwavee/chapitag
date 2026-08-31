@@ -8,15 +8,15 @@ export function NfcScanIllustration() {
     <div className="relative mx-auto flex h-40 w-64 items-center justify-center sm:h-48 sm:w-80">
       {/* pulsing NFC rings */}
       <span
-        className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-indigo-400"
+        className="deco-ping absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-indigo-400"
         style={{ animation: "ping-ring 2.6s ease-out infinite" }}
       />
       <span
-        className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-fuchsia-400"
+        className="deco-ping absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-fuchsia-400"
         style={{ animation: "ping-ring 2.6s ease-out infinite 0.9s" }}
       />
       <span
-        className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-amber-400"
+        className="deco-ping absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-amber-400"
         style={{ animation: "ping-ring 2.6s ease-out infinite 1.8s" }}
       />
 

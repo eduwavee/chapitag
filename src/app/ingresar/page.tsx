@@ -51,7 +51,7 @@ export default function IngresarPage() {
           </label>
 
           {state?.error && (
-            <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
+            <p className="anim-fade-in rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
               {state.error}
             </p>
           )}
@@ -59,7 +59,7 @@ export default function IngresarPage() {
           <button
             type="submit"
             disabled={pending}
-            className="w-full rounded-full bg-indigo-600 px-4 py-2.5 font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-60"
+            className="press-scale w-full rounded-full bg-indigo-600 px-4 py-2.5 font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-60"
           >
             {pending ? "Ingresando..." : "Ingresar"}
           </button>
