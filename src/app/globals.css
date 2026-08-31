@@ -26,3 +26,157 @@ h2,
 h3 {
   font-family: var(--font-heading);
 }
+
+/* ---------------------------------------------------------------------
+ * Motion + decorative shapes shared across pages (landing, panel, public
+ * profile). Kept in one place so the "playful" feel stays consistent.
+ * ------------------------------------------------------------------- */
+
+@keyframes float-a {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-16px);
+  }
+}
+@keyframes float-b {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(12px) rotate(-6deg);
+  }
+}
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotate(-8deg);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.08) rotate(3deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+@keyframes card-in {
+  0% {
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes ping-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.55;
+  }
+  80%,
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+.anim-load-1 {
+  animation: bounce-in 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.anim-load-2 {
+  animation: fade-up 0.7s ease both 0.12s;
+}
+.anim-load-3 {
+  animation: fade-up 0.7s ease both 0.26s;
+}
+.anim-load-4 {
+  animation: fade-up 0.7s ease both 0.4s;
+}
+.anim-card-in {
+  animation: card-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both 0.1s;
+}
+.anim-pop-in {
+  animation: pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Decorative pastel blobs + faint shapes. Purely visual, never interactive. */
+.deco-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(60px);
+  pointer-events: none;
+}
+.deco-ring {
+  position: absolute;
+  border-radius: 9999px;
+  border-width: 2px;
+  border-style: solid;
+  pointer-events: none;
+}
+.deco-paw {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* Scroll reveal: JS (ScrollReveal component) toggles .is-visible when the
+   element enters the viewport. Respect reduced-motion preferences. */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-load-1,
+  .anim-load-2,
+  .anim-load-3,
+  .anim-load-4,
+  .anim-card-in,
+  .anim-pop-in,
+  .deco-blob,
+  .deco-ring,
+  .deco-paw {
+    animation: none !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
