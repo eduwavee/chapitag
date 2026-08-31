@@ -20,9 +20,10 @@ export function PhotoGallery({
         {active ? (
           // eslint-disable-next-line @next/next/no-img-element -- foto subida por el usuario, servida desde /api/uploads (no vive en /public)
           <img
+            key={activeIndex}
             src={active}
             alt={petName}
-            className="h-full w-full object-cover"
+            className="anim-img-in h-full w-full object-cover"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-7xl">
@@ -38,7 +39,7 @@ export function PhotoGallery({
               key={url}
               type="button"
               onClick={() => setActiveIndex(i)}
-              className={`h-14 w-14 flex-shrink-0 overflow-hidden rounded-lg ring-2 transition ${
+              className={`press-scale h-14 w-14 flex-shrink-0 overflow-hidden rounded-lg ring-2 transition-[box-shadow] duration-150 ${
                 i === activeIndex ? "ring-indigo-500" : "ring-transparent"
               }`}
             >

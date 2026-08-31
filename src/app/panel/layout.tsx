@@ -21,22 +21,22 @@ export default async function PanelLayout({
       />
       <div
         aria-hidden
-        className="deco-blob -bottom-28 -left-24 h-64 w-64 bg-gradient-to-br from-emerald-200 to-sky-200 opacity-35 dark:from-emerald-900 dark:to-sky-900 dark:opacity-20"
+        className="deco-blob deco-blob-sm-hide -bottom-28 -left-24 h-64 w-64 bg-gradient-to-br from-emerald-200 to-sky-200 opacity-35 dark:from-emerald-900 dark:to-sky-900 dark:opacity-20"
         style={{ animation: "float-b 11s ease-in-out infinite" }}
       />
       <div
         aria-hidden
-        className="deco-blob left-1/3 top-1/2 h-40 w-40 bg-gradient-to-br from-amber-200 to-pink-200 opacity-25 dark:from-amber-900 dark:to-pink-900 dark:opacity-15"
+        className="deco-blob deco-blob-sm-hide left-1/3 top-1/2 h-40 w-40 bg-gradient-to-br from-amber-200 to-pink-200 opacity-25 dark:from-amber-900 dark:to-pink-900 dark:opacity-15"
         style={{ animation: "float-a 13s ease-in-out infinite 1.2s" }}
       />
       <div
         aria-hidden
-        className="deco-ring right-1/3 top-24 h-3 w-3 border-fuchsia-300 opacity-60 dark:border-fuchsia-700"
+        className="deco-ring deco-blob-sm-hide right-1/3 top-24 h-3 w-3 border-fuchsia-300 opacity-60 dark:border-fuchsia-700"
         style={{ animation: "float-b 7s ease-in-out infinite" }}
       />
       <div
         aria-hidden
-        className="deco-ring left-1/4 top-2/3 h-4 w-4 border-indigo-300 opacity-50 dark:border-indigo-700"
+        className="deco-ring deco-blob-sm-hide left-1/4 top-2/3 h-4 w-4 border-indigo-300 opacity-50 dark:border-indigo-700"
         style={{ animation: "float-a 8s ease-in-out infinite .6s" }}
       />
 

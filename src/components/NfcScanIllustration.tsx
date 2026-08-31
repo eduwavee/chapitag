@@ -2,6 +2,11 @@
  * Hero illustration: a stylized ChapiTag NFC tag being scanned by a phone,
  * with pulsing rings standing in for the NFC signal. Pure CSS/SVG, no JS —
  * safe to render on the server.
+ *
+ * The tag and phone carry their resting transform *inside* their keyframes
+ * (tag-wobble / phone-bob in globals.css) rather than in Tailwind classes,
+ * so the idle animation and the base offset don't fight. `.deco-wobble`
+ * gets frozen under prefers-reduced-motion.
  */
 export function NfcScanIllustration() {
   return (
@@ -21,7 +26,10 @@ export function NfcScanIllustration() {
       />
 
       {/* the tag */}
-      <div className="relative z-10 flex h-20 w-32 -translate-x-6 rotate-[-6deg] flex-col justify-between rounded-2xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 p-3 shadow-xl sm:h-24 sm:w-40">
+      <div
+        className="deco-wobble deco-wobble-tag relative z-10 flex h-20 w-32 flex-col justify-between rounded-2xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 p-3 shadow-xl sm:h-24 sm:w-40"
+        style={{ animation: "tag-wobble 5s ease-in-out infinite" }}
+      >
         <span className="text-lg sm:text-xl">🐾</span>
         <span className="text-[10px] font-semibold uppercase tracking-wide text-white/80 sm:text-xs">
           ChapiTag
@@ -29,7 +37,10 @@ export function NfcScanIllustration() {
       </div>
 
       {/* the phone */}
-      <div className="relative z-10 flex h-24 w-14 translate-x-10 rotate-[8deg] items-start justify-center rounded-xl border-2 border-slate-700 bg-slate-900 pt-2 shadow-xl sm:h-28 sm:w-16">
+      <div
+        className="deco-wobble deco-wobble-phone relative z-10 flex h-24 w-14 items-start justify-center rounded-xl border-2 border-slate-700 bg-slate-900 pt-2 shadow-xl sm:h-28 sm:w-16"
+        style={{ animation: "phone-bob 5s ease-in-out infinite 0.4s" }}
+      >
         <div className="h-1 w-4 rounded-full bg-slate-600" />
       </div>
     </div>

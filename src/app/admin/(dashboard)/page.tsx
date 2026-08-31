@@ -1,6 +1,8 @@
 import { countTagsByStatus, countTagsGeneratedByDay, listTagsDetailed } from "@/lib/repo/tags";
 import { GenerateBatchForm } from "@/components/GenerateBatchForm";
 import { TagsSparkline } from "@/components/TagsSparkline";
+import { StatCard } from "@/components/StatCard";
+import { ScrollReveal } from "@/components/ScrollReveal";
 import { revokeTagAction } from "@/app/admin/actions";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -24,19 +26,19 @@ export default async function AdminHomePage() {
     <div className="space-y-8">
       <div>
         <h1 className="font-heading text-2xl font-bold">Tarjetas NFC</h1>
-        <div className="mt-4 grid grid-cols-3 gap-4">
-          <StatCard label="Sin usar" value={counts.UNASSIGNED} emoji="📦" />
-          <StatCard label="Asignadas" value={counts.ASSIGNED} emoji="✅" />
-          <StatCard label="Dadas de baja" value={counts.REVOKED} emoji="🚫" />
+        <div className="mt-4 grid grid-cols-3 gap-3 sm:gap-4">
+          <StatCard label="Sin usar" value={counts.UNASSIGNED} emoji="📦" index={0} />
+          <StatCard label="Asignadas" value={counts.ASSIGNED} emoji="✅" index={1} />
+          <StatCard label="Dadas de baja" value={counts.REVOKED} emoji="🚫" index={2} />
         </div>
       </div>
 
-      <div className="rounded-3xl border bg-white p-6 shadow-sm">
+      <ScrollReveal className="rounded-3xl border bg-white p-6 shadow-sm">
         <h2 className="font-heading font-semibold">Actividad reciente</h2>
         <div className="mt-4">
           <TagsSparkline data={dailyCounts} />
         </div>
-      </div>
+      </ScrollReveal>
 
       <div className="rounded-3xl border bg-white p-6 shadow-sm">
         <h2 className="font-heading font-semibold">Generar nuevo lote de tarjetas</h2>
@@ -106,24 +108,6 @@ export default async function AdminHomePage() {
           </table>
         </div>
       </div>
-    </div>
-  );
-}
-
-function StatCard({
-  label,
-  value,
-  emoji,
-}: {
-  label: string;
-  value: number;
-  emoji: string;
-}) {
-  return (
-    <div className="rounded-3xl border bg-white p-5 shadow-sm">
-      <p className="text-2xl">{emoji}</p>
-      <p className="mt-1 font-heading text-3xl font-bold">{value}</p>
-      <p className="mt-1 text-sm text-slate-600">{label}</p>
     </div>
   );
 }
