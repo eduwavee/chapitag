@@ -5,6 +5,7 @@ import { SPECIES_OPTIONS, SEX_OPTIONS } from "@/lib/ui";
 import { PET_THEMES, DEFAULT_THEME_ID } from "@/lib/themes";
 import { PET_BADGES } from "@/lib/badges";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { Spinner } from "@/components/Spinner";
 
 export interface PetFormDefaults {
   name?: string;
@@ -166,7 +167,7 @@ export function PetForm({
                 />
                 <span
                   style={{ background: theme.gradient }}
-                  className="flex h-12 w-12 items-center justify-center rounded-2xl text-xl shadow-sm ring-2 ring-transparent ring-offset-2 transition peer-checked:ring-slate-900 dark:ring-offset-slate-900 dark:peer-checked:ring-white"
+                  className="flex h-12 w-12 items-center justify-center rounded-2xl text-xl shadow-sm ring-2 ring-transparent ring-offset-2 transition duration-200 [transition-timing-function:var(--ease-spring)] peer-checked:scale-110 peer-checked:ring-slate-900 dark:ring-offset-slate-900 dark:peer-checked:ring-white"
                 >
                   {theme.emoji}
                 </span>
@@ -372,8 +373,9 @@ export function PetForm({
       <button
         type="submit"
         disabled={pending}
-        className="press-scale w-full rounded-full bg-indigo-600 px-4 py-2.5 font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-indigo-700 disabled:opacity-60 sm:w-auto sm:px-8"
+        className="press-scale hover-lift inline-flex w-full items-center justify-center gap-2 rounded-full bg-indigo-600 px-4 py-2.5 font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-60 sm:w-auto sm:px-8"
       >
+        {pending && <Spinner />}
         {pending ? "Guardando..." : submitLabel}
       </button>
     </form>

@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { generateBatchAction } from "@/app/admin/actions";
+import { Spinner } from "@/components/Spinner";
 
 export function GenerateBatchForm() {
   const [state, formAction, pending] = useActionState(generateBatchAction, {});
@@ -36,8 +37,9 @@ export function GenerateBatchForm() {
       <button
         type="submit"
         disabled={pending}
-        className="press-scale rounded-full bg-indigo-600 px-4 py-2.5 font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-60"
+        className="press-scale hover-lift inline-flex items-center justify-center gap-2 rounded-full bg-indigo-600 px-4 py-2.5 font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-60"
       >
+        {pending && <Spinner />}
         {pending ? "Generando..." : "Generar tarjetas"}
       </button>
 

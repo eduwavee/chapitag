@@ -50,10 +50,14 @@ export function TagsSparkline({ data }: { data: DailyCount[] }) {
             >
               <div className="flex h-full items-end">
                 <div
-                  className={`w-full rounded-t transition-colors ${
+                  className={`anim-bar w-full rounded-t transition-colors ${
                     isHovered ? "bg-indigo-500" : "bg-indigo-200"
                   } ${d.count > 0 ? "" : "bg-slate-100"}`}
-                  style={{ height: `${heightPct}%` }}
+                  style={{
+                    height: `${heightPct}%`,
+                    transformOrigin: "bottom",
+                    animationDelay: `${i * 22}ms`,
+                  }}
                 />
               </div>
             </div>

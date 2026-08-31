@@ -42,9 +42,11 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
       onClick={() => setTheme(isDark ? "light" : "dark")}
       aria-label={isDark ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
       title={isDark ? "Modo claro" : "Modo oscuro"}
-      className={`press-scale inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:-translate-y-0.5 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:text-white ${className}`}
+      className={`press-scale hover-lift inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-white text-slate-600 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:text-white ${className}`}
     >
-      {isDark ? "☀️" : "🌙"}
+      <span key={isDark ? "sun" : "moon"} className="anim-icon-swap inline-block">
+        {isDark ? "☀️" : "🌙"}
+      </span>
     </button>
   );
 }

@@ -16,7 +16,7 @@ export default async function PanelHomePage() {
         <h1 className="font-heading text-2xl font-bold dark:text-white">Mis mascotas</h1>
         <Link
           href="/panel/mascotas/nueva"
-          className="press-scale rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700"
+          className="press-scale hover-lift rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700"
         >
           + Registrar mascota
         </Link>
@@ -42,10 +42,10 @@ export default async function PanelHomePage() {
             const theme = getTheme(pet.theme);
             const badges = parseBadges(pet.badges);
             return (
-              <ScrollReveal key={pet.id} delay={Math.min(i, 5) * 0.06}>
+              <ScrollReveal key={pet.id} delay={Math.min(i, 5) * 0.06} variant="scale">
               <Link
                 href={`/panel/mascotas/${pet.id}`}
-                className="group block overflow-hidden rounded-3xl border bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900 dark:hover:shadow-slate-900/60"
+                className="group hover-lift hover-lift-lg block overflow-hidden rounded-3xl border bg-white shadow-sm hover:shadow-lg dark:border-slate-800 dark:bg-slate-900 dark:hover:shadow-slate-900/60"
               >
                 <div className="h-2" style={{ background: theme.gradient }} />
                 <div className="flex items-center gap-4 p-4">

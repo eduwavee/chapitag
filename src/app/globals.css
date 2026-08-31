@@ -39,24 +39,87 @@ h3 {
 :root {
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  /* Overshoot juguetón — un único token en vez de repetir el cubic-bezier
+     a mano en cada `animation:` inline. */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Curva tipo drawer de iOS para paneles/sheets. */
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* Presupuesto de duración (UI < 300ms). */
+  --dur-fast: 140ms; /* press / hover / color */
+  --dur-base: 220ms; /* cards, reveals, popovers */
+  --dur-slow: 320ms; /* entradas grandes */
 }
 
+/* Suavizado de bordes (squircle): superellipse en vez del arco de círculo.
+   Progressive enhancement — Chromium 139+; el resto ve `border-radius`
+   normal. Se excluye `rounded-full` (pills/avatares circulares). */
+@supports (corner-shape: superellipse) {
+  .rounded-lg,
+  .rounded-xl,
+  .rounded-2xl,
+  .rounded-3xl {
+    corner-shape: superellipse;
+  }
+}
+
+/* Figuras decorativas (blobs/anillos): flotan y además respiran de escala y
+   giran un poco, así no parecen pegadas. */
 @keyframes float-a {
   0%,
   100% {
-    transform: translateY(0);
+    transform: translateY(0) rotate(0deg) scale(1);
   }
   50% {
-    transform: translateY(-16px);
+    transform: translateY(-18px) rotate(6deg) scale(1.06);
   }
 }
 @keyframes float-b {
   0%,
   100% {
-    transform: translateY(0) rotate(0deg);
+    transform: translateY(0) rotate(0deg) scale(1);
   }
   50% {
-    transform: translateY(12px) rotate(-6deg);
+    transform: translateY(14px) rotate(-8deg) scale(0.94);
+  }
+}
+/* Deriva lenta de un degradado grande: se anima la posición del fondo sobre
+   un `background-size` ampliado. Usado en fondos y en texto con gradiente. */
+@keyframes gradient-drift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+/* Barrido de brillo diagonal al pasar el mouse por un botón. */
+@keyframes btn-sheen {
+  from {
+    transform: translateX(-120%) skewX(-18deg);
+  }
+  to {
+    transform: translateX(220%) skewX(-18deg);
+  }
+}
+/* Bamboleo suave de la chapita en la ilustración del hero. */
+@keyframes tag-wobble {
+  0%,
+  100% {
+    transform: translateX(-1.5rem) rotate(-6deg);
+  }
+  50% {
+    transform: translateX(-1.5rem) rotate(-1deg);
+  }
+}
+@keyframes phone-bob {
+  0%,
+  100% {
+    transform: translateX(2.5rem) rotate(8deg) translateY(0);
+  }
+  50% {
+    transform: translateX(2.5rem) rotate(8deg) translateY(-6px);
   }
 }
 @keyframes pop-in {
@@ -107,6 +170,31 @@ h3 {
     transform: translateY(0) scale(1);
   }
 }
+@keyframes bar-grow {
+  from {
+    transform: scaleY(0);
+  }
+}
+@keyframes img-in {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+@keyframes icon-swap {
+  from {
+    opacity: 0;
+    transform: rotate(-45deg) scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(0) scale(1);
+  }
+}
 @keyframes ping-ring {
   0% {
     transform: scale(0.8);
@@ -118,9 +206,19 @@ h3 {
     opacity: 0;
   }
 }
+/* Fallback reduced-motion para los anillos NFC: solo opacidad. */
+@keyframes ping-fade {
+  0%,
+  100% {
+    opacity: 0.12;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
 
 .anim-load-1 {
-  animation: bounce-in 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: bounce-in 0.7s var(--ease-spring) both;
 }
 .anim-load-2 {
   animation: fade-up 0.6s var(--ease-out) both 0.12s;
@@ -138,7 +236,7 @@ h3 {
    0.55s) so badges pop in after the card has settled, not while it's still
    moving. */
 .anim-pop-in {
-  animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both 0.55s;
+  animation: pop-in 0.4s var(--ease-spring) both 0.55s;
 }
 /* Gentle entrance for form feedback (validation errors, save confirmations):
    these appear/vanish on submit with no bridge otherwise. No bounce — a
@@ -146,15 +244,114 @@ h3 {
 .anim-fade-in {
   animation: fade-up 0.3s var(--ease-out) both;
 }
+/* Crossfade al cambiar la foto activa en la galería del perfil público. El
+   blur breve tapa el corte entre una imagen y otra. */
+.anim-img-in {
+  animation: img-in 0.26s var(--ease-out) both;
+}
+/* Barras del sparkline creciendo desde la base al cargar el panel. */
+.anim-bar {
+  animation: bar-grow 0.42s var(--ease-out) both;
+}
+/* Cambio de ícono sol/luna en el toggle de tema. */
+.anim-icon-swap {
+  animation: icon-swap 0.3s var(--ease-spring) both;
+}
+/* Transición de entrada de página (template.tsx del panel/admin). Suave y
+   corta — no compite con el contenido. */
+@keyframes route-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+.anim-route {
+  animation: route-in 0.26s var(--ease-out) both;
+}
 
 /* Press feedback: every pressable primary action gets this so the UI feels
    like it's listening. Kept even under reduced-motion — it's momentary
    feedback tied to input, not ambient/decorative movement. */
 .press-scale {
-  transition: transform 140ms var(--ease-out);
+  transition: transform var(--dur-fast) var(--ease-out);
 }
 .press-scale:active {
   transform: scale(0.97);
+}
+
+/* Hover-lift compartido para cards/botones clickeables. Antes cada lugar
+   repetía `transition hover:-translate-y-0.5 hover:shadow-*` con la curva y
+   duración por defecto de Tailwind (150ms, ease genérico); ahora pasa por
+   los tokens. Tailwind v4 ya limita `:hover` a dispositivos con puntero
+   fino, así que no queda "pegado" al tocar en mobile. */
+.hover-lift {
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    opacity var(--dur-fast) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+  .hover-lift-lg:hover {
+    transform: translateY(-4px);
+  }
+  /* Glow de color al pasar el mouse por una card. Color por defecto índigo
+     (marca); se puede cambiar por card con `--glow: <color>`. */
+  .hover-glow {
+    --glow: 99 102 241; /* indigo-500, en canales RGB para el rgb(... / a) */
+  }
+  .hover-glow:hover {
+    box-shadow:
+      0 14px 34px -10px rgb(var(--glow) / 0.35),
+      0 0 0 1px rgb(var(--glow) / 0.12);
+  }
+}
+
+/* Botón con barrido de brillo en hover. El `::before` es una banda clara que
+   cruza el botón una vez al entrar el mouse. `overflow-hidden` en el botón. */
+.btn-sheen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.btn-sheen::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 45%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  transform: translateX(-120%) skewX(-18deg);
+  pointer-events: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn-sheen:hover::before {
+    animation: btn-sheen 0.7s var(--ease-out);
+  }
+}
+
+/* Texto con degradado que deriva lento (headline del hero). Necesita
+   `bg-clip-text text-transparent` y un `background-image` de gradiente. */
+.text-gradient-animated {
+  background-size: 220% auto;
+  animation: gradient-drift 7s ease-in-out infinite;
+}
+
+/* Fondo de degradado grande que deriva (perfil público). */
+.bg-drift {
+  background-size: 200% 200% !important;
+  animation: gradient-drift 18s ease-in-out infinite;
 }
 
 /* Decorative pastel blobs + faint shapes. Purely visual, never interactive. */
@@ -180,6 +377,35 @@ h3 {
 .deco-ping {
   pointer-events: none;
 }
+/* Hook para el bamboleo idle de la chapita/celular del hero — solo existe
+   para poder frenarlo bajo reduced-motion. */
+.deco-wobble {
+  will-change: transform;
+}
+
+/* En pantallas chicas los blobs grandes con blur(60px) son varias capas
+   caras de componer y no aportan tanto — se reduce el blur y algunos se
+   ocultan (marcados con .deco-blob-sm-hide). */
+@media (max-width: 640px) {
+  .deco-blob {
+    filter: blur(40px);
+  }
+  .deco-blob-sm-hide {
+    display: none;
+  }
+}
+
+/* Textura de grano sutil para que los degradados grandes no se vean planos.
+   Un SVG de ruido embebido, en overlay, sin costo de red. */
+.bg-grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.4;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
 
 /* Scroll reveal: JS (ScrollReveal component) toggles .is-visible when the
    element enters the viewport. Respect reduced-motion preferences. */
@@ -187,15 +413,110 @@ h3 {
   opacity: 0;
   transform: translateY(26px);
   transition:
-    opacity 0.45s var(--ease-out),
-    transform 0.45s var(--ease-out);
+    opacity var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out);
 }
 .reveal.is-visible {
   opacity: 1;
   transform: translateY(0);
 }
+/* Variante: escala en vez de desplazamiento vertical — para grillas y
+   elementos que "aparecen en el lugar" (stat cards, swatches). */
+.reveal-scale {
+  transform: scale(0.94);
+}
+.reveal-scale.is-visible {
+  transform: scale(1);
+}
 
+/* ---------------------------------------------------------------------
+ * View Transitions (React <ViewTransition> + App Router). Sin soporte del
+ * navegador, la navegación funciona igual sin animar.
+ * ------------------------------------------------------------------- */
+
+/* Que los clicks pasen a la página viva mientras corre la transición. */
+::view-transition {
+  pointer-events: none;
+}
+
+/* Crossfade por defecto un poco más suave y rápido que el del navegador. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 260ms;
+  animation-timing-function: var(--ease-out);
+}
+
+/* Morph tarjeta de mascota → página de detalle (share="morph"). El blur
+   tapa los artefactos de interpolación pixel a pixel. */
+::view-transition-group(.morph) {
+  animation-duration: 380ms;
+  animation-timing-function: var(--ease-in-out);
+}
+::view-transition-image-pair(.morph) {
+  animation-name: vt-blur;
+}
+@keyframes vt-blur {
+  40% {
+    filter: blur(3px);
+  }
+}
+
+/* Slides direccionales para navegación forward/back. */
+::view-transition-old(.nav-forward) {
+  --slide: -56px;
+  animation:
+    140ms var(--ease-out) both vt-fade reverse,
+    360ms var(--ease-in-out) both vt-slide reverse;
+}
+::view-transition-new(.nav-forward) {
+  --slide: 56px;
+  animation:
+    200ms var(--ease-out) 120ms both vt-fade,
+    360ms var(--ease-in-out) both vt-slide;
+}
+::view-transition-old(.nav-back) {
+  --slide: 56px;
+  animation:
+    140ms var(--ease-out) both vt-fade reverse,
+    360ms var(--ease-in-out) both vt-slide reverse;
+}
+::view-transition-new(.nav-back) {
+  --slide: -56px;
+  animation:
+    200ms var(--ease-out) 120ms both vt-fade,
+    360ms var(--ease-in-out) both vt-slide;
+}
+@keyframes vt-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes vt-slide {
+  from {
+    translate: var(--slide);
+  }
+}
+
+/* El header no se mueve durante los slides — ancla espacial fija. */
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(site-header) {
+  display: none;
+}
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+/* ---------------------------------------------------------------------
+ * Reduced motion: "menos y más suave", NO "cero" (guía de Emil Kowalski).
+ * Se cortan los desplazamientos y overshoots; se conservan cambios de
+ * opacidad que ayudan a entender qué pasó, y un latido mínimo en las
+ * figuras para que la página no quede congelada.
+ * ------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
+  /* Entradas: sin movimiento, aparecen directo. */
   .anim-load-1,
   .anim-load-2,
   .anim-load-3,
@@ -203,15 +524,64 @@ h3 {
   .anim-card-in,
   .anim-pop-in,
   .anim-fade-in,
+  .anim-icon-swap,
+  .anim-route,
+  .anim-bar {
+    animation: none !important;
+  }
+  /* Crossfade de foto: se mantiene (solo opacidad), sin el blur. */
+  .anim-img-in {
+    animation: rm-fade 0.2s ease both !important;
+  }
+  /* Figuras decorativas puramente estéticas: quietas (es el contrato de
+     accesibilidad — quien pide menos movimiento no quiere blobs latiendo). */
   .deco-blob,
   .deco-ring,
   .deco-paw,
-  .deco-ping {
+  .deco-wobble {
     animation: none !important;
   }
+  /* La chapita/celular quedan en su lugar de reposo (el transform vive en el
+     keyframe, así que sin animación hay que fijarlo acá). */
+  .deco-wobble-tag {
+    transform: translateX(-1.5rem) rotate(-6deg);
+  }
+  .deco-wobble-phone {
+    transform: translateX(2.5rem) rotate(8deg);
+  }
+  /* Anillos NFC: son explicativos (la señal yendo al celular), no adorno →
+     se cambia la expansión por un latido de opacidad, sin escala ni
+     desplazamiento. */
+  .deco-ping {
+    animation: ping-fade 2.6s ease-in-out infinite !important;
+  }
+  /* Scroll reveal: fade de opacidad, sin el slide de 26px. */
   .reveal {
-    opacity: 1;
-    transform: none;
-    transition: none;
+    transform: none !important;
+    transition: opacity var(--dur-base) var(--ease-out) !important;
+  }
+  /* Degradados animados: se frenan. */
+  .text-gradient-animated,
+  .bg-drift {
+    animation: none !important;
+  }
+  /* Hover: se conserva sombra/color, se quita el salto de posición. */
+  .hover-lift:hover,
+  .hover-lift-lg:hover {
+    transform: none !important;
+  }
+  .btn-sheen:hover::before {
+    animation: none !important;
+  }
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+@keyframes rm-fade {
+  from {
+    opacity: 0;
   }
 }
