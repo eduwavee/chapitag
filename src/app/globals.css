@@ -30,7 +30,16 @@ h3 {
 /* ---------------------------------------------------------------------
  * Motion + decorative shapes shared across pages (landing, panel, public
  * profile). Kept in one place so the "playful" feel stays consistent.
+ *
+ * Curves below follow Emil Kowalski's animation guidance (animations.dev):
+ * built-in CSS easings are too weak for UI, so entrances/exits use strong
+ * custom cubic-beziers instead of plain `ease`/`ease-in-out`.
  * ------------------------------------------------------------------- */
+
+:root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
 
 @keyframes float-a {
   0%,
@@ -53,11 +62,11 @@ h3 {
 @keyframes pop-in {
   0% {
     opacity: 0;
-    transform: scale(0.6);
+    transform: scale(0.85);
   }
   70% {
     opacity: 1;
-    transform: scale(1.08);
+    transform: scale(1.04);
   }
   100% {
     opacity: 1;
@@ -114,19 +123,38 @@ h3 {
   animation: bounce-in 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 .anim-load-2 {
-  animation: fade-up 0.7s ease both 0.12s;
+  animation: fade-up 0.6s var(--ease-out) both 0.12s;
 }
 .anim-load-3 {
-  animation: fade-up 0.7s ease both 0.26s;
+  animation: fade-up 0.6s var(--ease-out) both 0.26s;
 }
 .anim-load-4 {
-  animation: fade-up 0.7s ease both 0.4s;
+  animation: fade-up 0.6s var(--ease-out) both 0.4s;
 }
 .anim-card-in {
-  animation: card-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both 0.1s;
+  animation: card-in 0.45s var(--ease-out) both 0.1s;
 }
+/* Base delay pushed past anim-card-in's end (0.1s delay + 0.45s duration =
+   0.55s) so badges pop in after the card has settled, not while it's still
+   moving. */
 .anim-pop-in {
-  animation: pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both 0.55s;
+}
+/* Gentle entrance for form feedback (validation errors, save confirmations):
+   these appear/vanish on submit with no bridge otherwise. No bounce — a
+   playful overshoot reads wrong on an error message. */
+.anim-fade-in {
+  animation: fade-up 0.3s var(--ease-out) both;
+}
+
+/* Press feedback: every pressable primary action gets this so the UI feels
+   like it's listening. Kept even under reduced-motion — it's momentary
+   feedback tied to input, not ambient/decorative movement. */
+.press-scale {
+  transition: transform 140ms var(--ease-out);
+}
+.press-scale:active {
+  transform: scale(0.97);
 }
 
 /* Decorative pastel blobs + faint shapes. Purely visual, never interactive. */
@@ -147,6 +175,11 @@ h3 {
   position: absolute;
   pointer-events: none;
 }
+/* Infinite decorative motion (NFC scan rings) — same reduced-motion
+   exemption class as the other deco-* shapes. */
+.deco-ping {
+  pointer-events: none;
+}
 
 /* Scroll reveal: JS (ScrollReveal component) toggles .is-visible when the
    element enters the viewport. Respect reduced-motion preferences. */
@@ -154,8 +187,8 @@ h3 {
   opacity: 0;
   transform: translateY(26px);
   transition:
-    opacity 0.6s ease,
-    transform 0.6s ease;
+    opacity 0.45s var(--ease-out),
+    transform 0.45s var(--ease-out);
 }
 .reveal.is-visible {
   opacity: 1;
@@ -169,9 +202,11 @@ h3 {
   .anim-load-4,
   .anim-card-in,
   .anim-pop-in,
+  .anim-fade-in,
   .deco-blob,
   .deco-ring,
-  .deco-paw {
+  .deco-paw,
+  .deco-ping {
     animation: none !important;
   }
   .reveal {

@@ -20,7 +20,7 @@ export default function HomePage() {
             </Link>
             <Link
               href="/registro"
-              className="rounded-full bg-indigo-600 px-4 py-2 font-medium text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-indigo-700 hover:shadow-md"
+              className="press-scale rounded-full bg-indigo-600 px-4 py-2 font-medium text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-indigo-700 hover:shadow-md"
             >
               Registrar mi mascota
             </Link>
@@ -76,13 +76,13 @@ export default function HomePage() {
           <div className="anim-load-4 mt-8 flex justify-center gap-3">
             <Link
               href="/registro"
-              className="rounded-full bg-indigo-600 px-6 py-3 font-semibold text-white shadow-md shadow-indigo-200 transition hover:-translate-y-0.5 hover:bg-indigo-700 dark:shadow-indigo-950"
+              className="press-scale rounded-full bg-indigo-600 px-6 py-3 font-semibold text-white shadow-md shadow-indigo-200 transition hover:-translate-y-0.5 hover:bg-indigo-700 dark:shadow-indigo-950"
             >
               Quiero mi chapita
             </Link>
             <Link
               href="/p/demo"
-              className="rounded-full border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+              className="press-scale rounded-full border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
             >
               Ver perfil de ejemplo
             </Link>
@@ -155,7 +155,7 @@ export default function HomePage() {
           <div className="mt-6 flex justify-center">
             <Link
               href="/admin/ingresar"
-              className="rounded-full border border-slate-300 px-5 py-2.5 font-medium text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+              className="press-scale rounded-full border border-slate-300 px-5 py-2.5 font-medium text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
             >
               Ir al panel de administración
             </Link>

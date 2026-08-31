@@ -36,18 +36,18 @@ export function GenerateBatchForm() {
       <button
         type="submit"
         disabled={pending}
-        className="rounded-full bg-indigo-600 px-4 py-2.5 font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-60"
+        className="press-scale rounded-full bg-indigo-600 px-4 py-2.5 font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-60"
       >
         {pending ? "Generando..." : "Generar tarjetas"}
       </button>
 
       {state?.error && (
-        <p className="sm:col-span-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p className="anim-fade-in sm:col-span-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
           {state.error}
         </p>
       )}
       {state?.success && (
-        <p className="sm:col-span-3 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-800">
+        <p className="anim-fade-in sm:col-span-3 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-800">
           {state.success}
         </p>
       )}
