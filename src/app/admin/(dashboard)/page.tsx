@@ -1,5 +1,6 @@
-import { countTagsByStatus, listTagsDetailed } from "@/lib/repo/tags";
+import { countTagsByStatus, countTagsGeneratedByDay, listTagsDetailed } from "@/lib/repo/tags";
 import { GenerateBatchForm } from "@/components/GenerateBatchForm";
+import { TagsSparkline } from "@/components/TagsSparkline";
 import { revokeTagAction } from "@/app/admin/actions";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -17,6 +18,7 @@ const STATUS_STYLE: Record<string, string> = {
 export default async function AdminHomePage() {
   const counts = countTagsByStatus();
   const tags = listTagsDetailed(300);
+  const dailyCounts = countTagsGeneratedByDay(14);
 
   return (
     <div className="space-y-8">
@@ -26,6 +28,13 @@ export default async function AdminHomePage() {
           <StatCard label="Sin usar" value={counts.UNASSIGNED} emoji="📦" />
           <StatCard label="Asignadas" value={counts.ASSIGNED} emoji="✅" />
           <StatCard label="Dadas de baja" value={counts.REVOKED} emoji="🚫" />
+        </div>
+      </div>
+
+      <div className="rounded-3xl border bg-white p-6 shadow-sm">
+        <h2 className="font-heading font-semibold">Actividad reciente</h2>
+        <div className="mt-4">
+          <TagsSparkline data={dailyCounts} />
         </div>
       </div>
 

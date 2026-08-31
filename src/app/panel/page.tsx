@@ -4,6 +4,7 @@ import { listPetsByOwner } from "@/lib/repo/pets";
 import { findActiveTagForPet } from "@/lib/repo/tags";
 import { getTheme } from "@/lib/themes";
 import { getBadge, parseBadges } from "@/lib/badges";
+import { ScrollReveal } from "@/components/ScrollReveal";
 
 export default async function PanelHomePage() {
   const session = await requireOwnerSession();
@@ -36,15 +37,15 @@ export default async function PanelHomePage() {
         </div>
       ) : (
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          {pets.map((pet) => {
+          {pets.map((pet, i) => {
             const tag = findActiveTagForPet(pet.id);
             const theme = getTheme(pet.theme);
             const badges = parseBadges(pet.badges);
             return (
+              <ScrollReveal key={pet.id} delay={Math.min(i, 5) * 0.06}>
               <Link
-                key={pet.id}
                 href={`/panel/mascotas/${pet.id}`}
-                className="group overflow-hidden rounded-3xl border bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                className="group block overflow-hidden rounded-3xl border bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
               >
                 <div className="h-2" style={{ background: theme.gradient }} />
                 <div className="flex items-center gap-4 p-4">
@@ -95,6 +96,7 @@ export default async function PanelHomePage() {
                   </div>
                 </div>
               </Link>
+              </ScrollReveal>
             );
           })}
         </div>

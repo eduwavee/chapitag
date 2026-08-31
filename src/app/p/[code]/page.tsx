@@ -3,7 +3,7 @@ import { listPetPhotos } from "@/lib/repo/petPhotos";
 import { getTheme } from "@/lib/themes";
 import { getBadge, parseBadges } from "@/lib/badges";
 import { PhotoGallery } from "@/components/PhotoGallery";
-import { waLink } from "@/lib/ui";
+import { waLink, formatRelativeTime } from "@/lib/ui";
 
 export default async function PublicPetPage({
   params,
@@ -54,18 +54,28 @@ export default async function PublicPetPage({
 
   return (
     <div
-      className="flex-1 pb-10"
+      className="relative flex-1 overflow-hidden pb-10"
       style={{ background: `${theme.gradient}` }}
     >
-      <div className="mx-auto w-full max-w-md px-4 pt-6">
+      {/* soft decorative blobs — a light tint that reads well on any theme gradient */}
+      <div
+        className="deco-blob h-56 w-56 bg-white/30"
+        style={{ top: "-60px", left: "-70px", animation: "float-a 8s ease-in-out infinite" }}
+      />
+      <div
+        className="deco-blob h-48 w-48 bg-white/20"
+        style={{ bottom: "40px", right: "-60px", animation: "float-b 9s ease-in-out infinite" }}
+      />
+
+      <div className="relative mx-auto w-full max-w-md px-4 pt-6">
         <p
-          className="text-center text-sm font-semibold uppercase tracking-wide"
+          className="anim-load-2 text-center text-sm font-semibold uppercase tracking-wide"
           style={{ color: theme.onGradientText }}
         >
           {theme.emoji} ¡Me perdí! Ayudame a volver a casa
         </p>
 
-        <div className="mt-4 overflow-hidden rounded-3xl border bg-white shadow-xl">
+        <div className="anim-card-in mt-4 overflow-hidden rounded-3xl border bg-white shadow-xl">
           <PhotoGallery
             photos={galleryPhotos}
             petName={pet.name}
@@ -87,15 +97,19 @@ export default async function PublicPetPage({
             {(badges.length > 0 || pet.sterilized) && (
               <div className="mt-3 flex flex-wrap gap-1.5">
                 {!!pet.sterilized && (
-                  <Pill className="bg-indigo-100 text-indigo-800">
+                  <Pill className="bg-indigo-100 text-indigo-800" delay={0}>
                     ✂️ Esterilizado/a
                   </Pill>
                 )}
-                {badges.map((key) => {
+                {badges.map((key, i) => {
                   const badge = getBadge(key);
                   if (!badge) return null;
                   return (
-                    <Pill key={key} className={badge.className}>
+                    <Pill
+                      key={key}
+                      className={badge.className}
+                      delay={(pet.sterilized ? 1 : 0) + i}
+                    >
                       {badge.emoji} {badge.label}
                     </Pill>
                   );
@@ -190,7 +204,7 @@ export default async function PublicPetPage({
           className="mt-6 text-center text-xs"
           style={{ color: theme.onGradientText, opacity: 0.8 }}
         >
-          Perfil provisto por ChapiTag NFC
+          Perfil {formatRelativeTime(pet.updated_at)} · provisto por ChapiTag NFC
         </p>
       </div>
     </div>
@@ -200,13 +214,16 @@ export default async function PublicPetPage({
 function Pill({
   children,
   className,
+  delay = 0,
 }: {
   children: React.ReactNode;
   className: string;
+  delay?: number;
 }) {
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${className}`}
+      className={`anim-pop-in inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${className}`}
+      style={{ animationDelay: `${0.5 + delay * 0.1}s` }}
     >
       {children}
     </span>

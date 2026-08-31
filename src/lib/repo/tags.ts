@@ -98,6 +98,33 @@ export interface TagDetailedRow extends TagRow {
   owner_email: string | null;
 }
 
+export interface DailyCount {
+  date: string; // "YYYY-MM-DD"
+  count: number;
+}
+
+/** Tarjetas generadas por día en los últimos `days` días (incluye hoy), para el mini gráfico del admin. */
+export function countTagsGeneratedByDay(days = 14): DailyCount[] {
+  const rows = db
+    .prepare(
+      `SELECT substr(created_at, 1, 10) as day, COUNT(*) as c
+       FROM tags
+       WHERE created_at >= datetime('now', ?)
+       GROUP BY day`
+    )
+    .all(`-${days - 1} days`) as { day: string; c: number }[];
+
+  const byDay = new Map(rows.map((r) => [r.day, r.c]));
+  const result: DailyCount[] = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date();
+    d.setUTCDate(d.getUTCDate() - i);
+    const key = d.toISOString().slice(0, 10);
+    result.push({ date: key, count: byDay.get(key) ?? 0 });
+  }
+  return result;
+}
+
 /** Lista de tarjetas para el panel de admin, con el nombre de la mascota y el dueño si están asignadas. */
 export function listTagsDetailed(limit = 200): TagDetailedRow[] {
   return db
