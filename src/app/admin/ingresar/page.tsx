@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { adminLoginAction } from "./actions";
+import { Spinner } from "@/components/Spinner";
 
 export default function AdminLoginPage() {
   const [state, formAction, pending] = useActionState(adminLoginAction, {});
@@ -12,7 +13,7 @@ export default function AdminLoginPage() {
         aria-hidden
         className="pointer-events-none absolute -top-24 left-1/2 h-96 w-[42rem] -translate-x-1/2 rounded-full bg-gradient-to-br from-indigo-700 via-fuchsia-700 to-slate-900 opacity-40 blur-3xl"
       />
-      <div className="relative w-full max-w-md rounded-3xl border border-slate-800 bg-slate-900 p-8 shadow-xl">
+      <div className="anim-card-in relative w-full max-w-md rounded-3xl border border-slate-800 bg-slate-900 p-8 shadow-xl">
         <p className="text-3xl">🐾</p>
         <h1 className="mt-2 font-heading text-2xl font-bold text-white">
           Panel de administración
@@ -54,8 +55,9 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={pending}
-            className="press-scale w-full rounded-full bg-gradient-to-r from-indigo-500 to-fuchsia-500 px-4 py-2.5 font-semibold text-white shadow-sm hover:opacity-90 disabled:opacity-60"
+            className="press-scale hover-lift inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-indigo-500 to-fuchsia-500 px-4 py-2.5 font-semibold text-white shadow-sm hover:opacity-90 disabled:opacity-60"
           >
+            {pending && <Spinner />}
             {pending ? "Ingresando..." : "Ingresar"}
           </button>
         </form>

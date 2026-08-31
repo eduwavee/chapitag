@@ -20,7 +20,7 @@ export default function HomePage() {
             </Link>
             <Link
               href="/registro"
-              className="press-scale rounded-full bg-indigo-600 px-4 py-2 font-medium text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-indigo-700 hover:shadow-md"
+              className="btn-sheen press-scale hover-lift rounded-full bg-indigo-600 px-4 py-2 font-medium text-white shadow-sm hover:bg-indigo-700 hover:shadow-md"
             >
               Registrar mi mascota
             </Link>
@@ -37,22 +37,22 @@ export default function HomePage() {
         />
         <div
           aria-hidden
-          className="deco-blob left-10 top-40 h-40 w-40 bg-emerald-200 opacity-40 dark:bg-emerald-900 dark:opacity-20"
+          className="deco-blob deco-blob-sm-hide left-10 top-40 h-40 w-40 bg-emerald-200 opacity-40 dark:bg-emerald-900 dark:opacity-20"
           style={{ animation: "float-b 8s ease-in-out infinite" }}
         />
         <div
           aria-hidden
-          className="deco-blob right-16 top-20 h-32 w-32 bg-sky-200 opacity-40 dark:bg-sky-900 dark:opacity-20"
+          className="deco-blob deco-blob-sm-hide right-16 top-20 h-32 w-32 bg-sky-200 opacity-40 dark:bg-sky-900 dark:opacity-20"
           style={{ animation: "float-a 10s ease-in-out infinite 1s" }}
         />
         <div
           aria-hidden
-          className="deco-ring right-24 top-56 h-4 w-4 border-fuchsia-300 opacity-70 dark:border-fuchsia-700"
+          className="deco-ring deco-blob-sm-hide right-24 top-56 h-4 w-4 border-fuchsia-300 opacity-70 dark:border-fuchsia-700"
           style={{ animation: "float-b 6s ease-in-out infinite" }}
         />
         <div
           aria-hidden
-          className="deco-ring left-24 top-28 h-3 w-3 border-amber-300 opacity-70 dark:border-amber-700"
+          className="deco-ring deco-blob-sm-hide left-24 top-28 h-3 w-3 border-amber-300 opacity-70 dark:border-amber-700"
           style={{ animation: "float-a 7s ease-in-out infinite .5s" }}
         />
 
@@ -63,7 +63,7 @@ export default function HomePage() {
           <h1 className="anim-load-2 font-heading text-4xl font-extrabold tracking-tight text-slate-900 sm:text-6xl dark:text-white">
             Si tu mascota se pierde,
             <br className="hidden sm:block" /> que{" "}
-            <span className="bg-gradient-to-r from-indigo-600 via-fuchsia-500 to-amber-500 bg-clip-text text-transparent">
+            <span className="text-gradient-animated bg-gradient-to-r from-indigo-600 via-fuchsia-500 to-amber-500 bg-clip-text text-transparent">
               cualquiera
             </span>{" "}
             pueda contactarte al instante
@@ -76,13 +76,13 @@ export default function HomePage() {
           <div className="anim-load-4 mt-8 flex justify-center gap-3">
             <Link
               href="/registro"
-              className="press-scale rounded-full bg-indigo-600 px-6 py-3 font-semibold text-white shadow-md shadow-indigo-200 transition hover:-translate-y-0.5 hover:bg-indigo-700 dark:shadow-indigo-950"
+              className="btn-sheen press-scale hover-lift rounded-full bg-indigo-600 px-6 py-3 font-semibold text-white shadow-md shadow-indigo-200 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-300 dark:shadow-indigo-950 dark:hover:shadow-indigo-900"
             >
               Quiero mi chapita
             </Link>
             <Link
               href="/p/demo"
-              className="press-scale rounded-full border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+              className="press-scale hover-lift rounded-full border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-700 hover:border-indigo-300 hover:bg-slate-50 hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
             >
               Ver perfil de ejemplo
             </Link>
@@ -155,7 +155,7 @@ export default function HomePage() {
           <div className="mt-6 flex justify-center">
             <Link
               href="/admin/ingresar"
-              className="press-scale rounded-full border border-slate-300 px-5 py-2.5 font-medium text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+              className="press-scale hover-lift rounded-full border border-slate-300 px-5 py-2.5 font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
             >
               Ir al panel de administración
             </Link>
@@ -182,12 +182,12 @@ function Step({
   text: string;
 }) {
   return (
-    <div className="relative rounded-3xl border bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900">
+    <div className="hover-lift hover-lift-lg hover-glow relative rounded-3xl border bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-fuchsia-500 font-bold text-white">
         {n}
       </div>
       <p className="mt-3 text-2xl">{emoji}</p>
-      <h3 className="mt-2 font-heading font-semibold dark:text-white">{title}</h3>
+      <h3 className="mt-2 font-heading font-semibold text-slate-900 dark:text-white">{title}</h3>
       <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{text}</p>
     </div>
   );

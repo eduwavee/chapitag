@@ -54,8 +54,8 @@ export default async function PublicPetPage({
 
   return (
     <div
-      className="relative flex-1 overflow-hidden pb-10"
-      style={{ background: `${theme.gradient}` }}
+      className="bg-grain relative flex-1 overflow-hidden pb-10"
+      style={{ background: theme.gradient }}
     >
       {/* soft decorative blobs — a light tint that reads well on any theme gradient */}
       <div
@@ -67,7 +67,7 @@ export default async function PublicPetPage({
         style={{ bottom: "40px", right: "-60px", animation: "float-b 9s ease-in-out infinite" }}
       />
 
-      <div className="relative mx-auto w-full max-w-md px-4 pt-6">
+      <div className="relative z-10 mx-auto w-full max-w-md px-4 pt-6">
         <p
           className="anim-load-2 text-center text-sm font-semibold uppercase tracking-wide"
           style={{ color: theme.onGradientText }}

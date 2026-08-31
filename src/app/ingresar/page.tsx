@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { loginAction } from "./actions";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { Spinner } from "@/components/Spinner";
 
 export default function IngresarPage() {
   const [state, formAction, pending] = useActionState(loginAction, {});
@@ -15,7 +16,7 @@ export default function IngresarPage() {
         className="pointer-events-none absolute -top-24 left-1/2 h-96 w-[42rem] -translate-x-1/2 rounded-full bg-gradient-to-br from-amber-200 via-pink-200 to-indigo-200 opacity-50 blur-3xl dark:from-amber-900 dark:via-pink-900 dark:to-indigo-900 dark:opacity-30"
       />
       <ThemeToggle className="absolute right-6 top-6" />
-      <div className="relative w-full max-w-md rounded-3xl border bg-white p-8 shadow-lg shadow-slate-200/60 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
+      <div className="anim-card-in relative w-full max-w-md rounded-3xl border bg-white p-8 shadow-lg shadow-slate-200/60 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
         <p className="text-3xl">🐾</p>
         <h1 className="mt-2 font-heading text-2xl font-bold dark:text-white">
           Ingresá a tu cuenta
@@ -59,8 +60,9 @@ export default function IngresarPage() {
           <button
             type="submit"
             disabled={pending}
-            className="press-scale w-full rounded-full bg-indigo-600 px-4 py-2.5 font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-60"
+            className="press-scale hover-lift inline-flex w-full items-center justify-center gap-2 rounded-full bg-indigo-600 px-4 py-2.5 font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-60"
           >
+            {pending && <Spinner />}
             {pending ? "Ingresando..." : "Ingresar"}
           </button>
         </form>
