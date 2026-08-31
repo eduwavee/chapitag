@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Baloo_2 } from "next/font/google";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
 const baloo = Baloo_2({
@@ -20,9 +21,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" className={`h-full antialiased ${baloo.variable}`}>
-      <body className="min-h-full flex flex-col bg-slate-50 text-slate-900 font-sans">
-        {children}
+    <html
+      lang="es"
+      className={`h-full antialiased ${baloo.variable}`}
+      suppressHydrationWarning
+    >
+      <body className="flex min-h-full flex-col bg-slate-50 font-sans text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

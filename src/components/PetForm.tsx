@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { SPECIES_OPTIONS, SEX_OPTIONS } from "@/lib/ui";
 import { PET_THEMES, DEFAULT_THEME_ID } from "@/lib/themes";
 import { PET_BADGES } from "@/lib/badges";
+import { ScrollReveal } from "@/components/ScrollReveal";
 
 export interface PetFormDefaults {
   name?: string;
@@ -63,20 +64,20 @@ export function PetForm({
   return (
     <form action={formAction} className="space-y-8">
       {showTagCodeField && (
-        <Section title="Tarjeta NFC" emoji="🏷️">
+        <Section title="Tarjeta NFC" emoji="🏷️" delay={0}>
           <Field
             label="Código de la tarjeta"
             name="tagCode"
             placeholder="Ej: K7M2P9XQ"
             required
           />
-          <p className="-mt-2 text-xs text-slate-500">
+          <p className="-mt-2 text-xs text-slate-500 dark:text-slate-400">
             Es el código impreso en la chapita/tarjeta que compraste.
           </p>
         </Section>
       )}
 
-      <Section title="Datos de la mascota" emoji="🐾">
+      <Section title="Datos de la mascota" emoji="🐾" delay={showTagCodeField ? 0.08 : 0}>
         <Field
           label="Nombre"
           name="name"
@@ -84,7 +85,9 @@ export function PetForm({
           defaultValue={defaults?.name}
         />
         <label className="block text-sm">
-          <span className="mb-1 block font-medium text-slate-700">Especie</span>
+          <span className="mb-1 block font-medium text-slate-700 dark:text-slate-300">
+            Especie
+          </span>
           <select
             name="species"
             required
@@ -104,7 +107,9 @@ export function PetForm({
         </div>
         <div className="grid grid-cols-2 gap-4">
           <label className="block text-sm">
-            <span className="mb-1 block font-medium text-slate-700">Sexo</span>
+            <span className="mb-1 block font-medium text-slate-700 dark:text-slate-300">
+              Sexo
+            </span>
             <select
               name="sex"
               defaultValue={defaults?.sex || ""}
@@ -125,12 +130,12 @@ export function PetForm({
             defaultValue={defaults?.birthYear ?? undefined}
           />
         </div>
-        <label className="flex items-center gap-2 text-sm">
+        <label className="flex items-center gap-2 text-sm dark:text-slate-300">
           <input
             type="checkbox"
             name="sterilized"
             defaultChecked={defaults?.sterilized}
-            className="h-4 w-4 rounded border-slate-300 text-indigo-600"
+            className="h-4 w-4 rounded border-slate-300 text-indigo-600 dark:border-slate-600 dark:bg-slate-800"
           />
           Está castrado/a
         </label>
@@ -142,9 +147,9 @@ export function PetForm({
         />
       </Section>
 
-      <Section title="Personalización del perfil" emoji="🎨">
+      <Section title="Personalización del perfil" emoji="🎨" delay={showTagCodeField ? 0.16 : 0.08}>
         <div>
-          <span className="mb-2 block text-sm font-medium text-slate-700">
+          <span className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
             Tema de color
           </span>
           <div className="grid grid-cols-4 gap-3 sm:grid-cols-8">
@@ -161,11 +166,11 @@ export function PetForm({
                 />
                 <span
                   style={{ background: theme.gradient }}
-                  className="flex h-12 w-12 items-center justify-center rounded-2xl text-xl shadow-sm ring-2 ring-transparent ring-offset-2 transition peer-checked:ring-slate-900"
+                  className="flex h-12 w-12 items-center justify-center rounded-2xl text-xl shadow-sm ring-2 ring-transparent ring-offset-2 transition peer-checked:ring-slate-900 dark:ring-offset-slate-900 dark:peer-checked:ring-white"
                 >
                   {theme.emoji}
                 </span>
-                <span className="mt-1 block text-[11px] text-slate-600">
+                <span className="mt-1 block text-[11px] text-slate-600 dark:text-slate-400">
                   {theme.label}
                 </span>
               </label>
@@ -174,7 +179,7 @@ export function PetForm({
         </div>
 
         <div>
-          <span className="mb-2 block text-sm font-medium text-slate-700">
+          <span className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
             Insignias de estado (opcional)
           </span>
           <div className="flex flex-wrap gap-2">
@@ -188,7 +193,7 @@ export function PetForm({
                   className="peer sr-only"
                 />
                 <span
-                  className={`inline-flex items-center gap-1.5 rounded-full border border-transparent px-3 py-1.5 text-sm font-medium text-slate-500 ring-1 ring-slate-200 transition peer-checked:text-slate-900 peer-checked:ring-2 peer-checked:ring-indigo-500 ${badge.className} peer-checked:opacity-100 opacity-60 peer-checked:border-transparent`}
+                  className={`inline-flex items-center gap-1.5 rounded-full border border-transparent px-3 py-1.5 text-sm font-medium text-slate-500 ring-1 ring-slate-200 transition peer-checked:text-slate-900 peer-checked:ring-2 peer-checked:ring-indigo-500 dark:text-slate-400 dark:ring-slate-700 dark:peer-checked:text-white ${badge.className} peer-checked:opacity-100 opacity-60 peer-checked:border-transparent dark:opacity-50 dark:peer-checked:opacity-90`}
                 >
                   {badge.emoji} {badge.label}
                 </span>
@@ -198,7 +203,7 @@ export function PetForm({
         </div>
 
         <div>
-          <span className="mb-2 block text-sm font-medium text-slate-700">
+          <span className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
             Foto de portada (JPG, PNG o WEBP, máx. 5MB)
           </span>
           <Field label="" name="photo" type="file" hideLabel />
@@ -206,14 +211,14 @@ export function PetForm({
 
         {existingPhotos.length > 0 && (
           <div>
-            <span className="mb-2 block text-sm font-medium text-slate-700">
+            <span className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Fotos de la galería actuales
             </span>
             <div className="flex flex-wrap gap-3">
               {existingPhotos.map((photo) => (
                 <label
                   key={photo.id}
-                  className="group relative h-20 w-20 cursor-pointer overflow-hidden rounded-xl border"
+                  className="group relative h-20 w-20 cursor-pointer overflow-hidden rounded-xl border dark:border-slate-700"
                 >
                   <input
                     type="checkbox"
@@ -233,7 +238,7 @@ export function PetForm({
                 </label>
               ))}
             </div>
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
               Marcá una foto para eliminarla al guardar.
             </p>
           </div>
@@ -241,7 +246,7 @@ export function PetForm({
 
         {gallerySlotsLeft > 0 && (
           <div>
-            <span className="mb-1 block text-sm font-medium text-slate-700">
+            <span className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Agregar fotos a la galería (hasta {gallerySlotsLeft} más)
             </span>
             <input
@@ -249,13 +254,17 @@ export function PetForm({
               type="file"
               multiple
               accept="image/jpeg,image/png,image/webp"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 file:mr-3 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-1.5 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 file:mr-3 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-1.5 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:file:bg-slate-700 dark:file:text-slate-200"
             />
           </div>
         )}
       </Section>
 
-      <Section title="Información médica y veterinario (opcional)" emoji="🩺">
+      <Section
+        title="Información médica y veterinario (opcional)"
+        emoji="🩺"
+        delay={showTagCodeField ? 0.24 : 0.16}
+      >
         <Field
           label="Número de microchip"
           name="microchipNumber"
@@ -288,7 +297,11 @@ export function PetForm({
         />
       </Section>
 
-      <Section title="Contacto que verá quien la encuentre" emoji="📞">
+      <Section
+        title="Contacto que verá quien la encuentre"
+        emoji="📞"
+        delay={showTagCodeField ? 0.32 : 0.24}
+      >
         <Field
           label="Nombre del contacto"
           name="contactName"
@@ -331,19 +344,19 @@ export function PetForm({
         />
       </Section>
 
-      <Section title="Ubicación (opcional)" emoji="📍">
+      <Section title="Ubicación (opcional)" emoji="📍" delay={showTagCodeField ? 0.4 : 0.32}>
         <Field label="Ciudad / barrio" name="city" defaultValue={defaults?.city} />
         <Field
           label="Dirección"
           name="address"
           defaultValue={defaults?.address}
         />
-        <label className="flex items-center gap-2 text-sm">
+        <label className="flex items-center gap-2 text-sm dark:text-slate-300">
           <input
             type="checkbox"
             name="showExactAddress"
             defaultChecked={defaults?.showExactAddress}
-            className="h-4 w-4 rounded border-slate-300 text-indigo-600"
+            className="h-4 w-4 rounded border-slate-300 text-indigo-600 dark:border-slate-600 dark:bg-slate-800"
           />
           Mostrar la dirección exacta en el perfil público (si no, solo se
           muestra la ciudad/barrio)
@@ -351,7 +364,7 @@ export function PetForm({
       </Section>
 
       {state?.error && (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
           {state.error}
         </p>
       )}
@@ -359,7 +372,7 @@ export function PetForm({
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-full bg-indigo-600 px-4 py-2.5 font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-60 sm:w-auto sm:px-8"
+        className="w-full rounded-full bg-indigo-600 px-4 py-2.5 font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-indigo-700 disabled:opacity-60 sm:w-auto sm:px-8"
       >
         {pending ? "Guardando..." : submitLabel}
       </button>
@@ -368,25 +381,32 @@ export function PetForm({
 }
 
 const selectClass =
-  "w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500";
+  "w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100";
 
 function Section({
   title,
   emoji,
+  delay = 0,
   children,
 }: {
   title: string;
   emoji?: string;
+  /** Escalona el scroll-reveal entre secciones; se pasa explícitamente desde
+   * cada llamado (en vez de un contador compartido, que se desincroniza
+   * entre re-renders del formulario). */
+  delay?: number;
   children: React.ReactNode;
 }) {
   return (
-    <fieldset className="rounded-3xl border bg-white p-6 shadow-sm">
-      <legend className="px-1 text-sm font-semibold text-slate-900">
-        {emoji ? `${emoji} ` : ""}
-        {title}
-      </legend>
-      <div className="mt-3 space-y-4">{children}</div>
-    </fieldset>
+    <ScrollReveal delay={delay}>
+      <fieldset className="rounded-3xl border bg-white p-6 shadow-sm transition-colors dark:border-slate-800 dark:bg-slate-900">
+        <legend className="px-1 text-sm font-semibold text-slate-900 dark:text-white">
+          {emoji ? `${emoji} ` : ""}
+          {title}
+        </legend>
+        <div className="mt-3 space-y-4">{children}</div>
+      </fieldset>
+    </ScrollReveal>
   );
 }
 
@@ -410,7 +430,9 @@ function Field({
   return (
     <label className="block text-sm">
       {!hideLabel && (
-        <span className="mb-1 block font-medium text-slate-700">{label}</span>
+        <span className="mb-1 block font-medium text-slate-700 dark:text-slate-300">
+          {label}
+        </span>
       )}
       <input
         name={name}
@@ -419,7 +441,7 @@ function Field({
         defaultValue={defaultValue}
         placeholder={placeholder}
         accept={type === "file" ? "image/jpeg,image/png,image/webp" : undefined}
-        className="w-full rounded-lg border border-slate-300 px-3 py-2 file:mr-3 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-1.5 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+        className="w-full rounded-lg border border-slate-300 px-3 py-2 file:mr-3 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-1.5 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:file:bg-slate-700 dark:file:text-slate-200 dark:placeholder:text-slate-500"
       />
     </label>
   );
@@ -438,13 +460,15 @@ function TextArea({
 }) {
   return (
     <label className="block text-sm">
-      <span className="mb-1 block font-medium text-slate-700">{label}</span>
+      <span className="mb-1 block font-medium text-slate-700 dark:text-slate-300">
+        {label}
+      </span>
       <textarea
         name={name}
         defaultValue={defaultValue}
         placeholder={placeholder}
         rows={3}
-        className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+        className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500"
       />
     </label>
   );

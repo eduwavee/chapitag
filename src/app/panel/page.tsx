@@ -13,7 +13,7 @@ export default async function PanelHomePage() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="font-heading text-2xl font-bold">Mis mascotas</h1>
+        <h1 className="font-heading text-2xl font-bold dark:text-white">Mis mascotas</h1>
         <Link
           href="/panel/mascotas/nueva"
           className="rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700"
@@ -23,14 +23,14 @@ export default async function PanelHomePage() {
       </div>
 
       {pets.length === 0 ? (
-        <div className="mt-8 rounded-3xl border border-dashed bg-white p-10 text-center">
+        <div className="mt-8 rounded-3xl border border-dashed bg-white p-10 text-center dark:border-slate-700 dark:bg-slate-900">
           <p className="text-4xl">🐾</p>
-          <p className="mt-2 text-slate-600">
+          <p className="mt-2 text-slate-600 dark:text-slate-400">
             Todavía no registraste ninguna mascota.
           </p>
           <Link
             href="/panel/mascotas/nueva"
-            className="mt-4 inline-block font-medium text-indigo-600"
+            className="mt-4 inline-block font-medium text-indigo-600 dark:text-indigo-400"
           >
             Registrar mi primera mascota →
           </Link>
@@ -45,11 +45,11 @@ export default async function PanelHomePage() {
               <ScrollReveal key={pet.id} delay={Math.min(i, 5) * 0.06}>
               <Link
                 href={`/panel/mascotas/${pet.id}`}
-                className="group block overflow-hidden rounded-3xl border bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                className="group block overflow-hidden rounded-3xl border bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900 dark:hover:shadow-slate-900/60"
               >
                 <div className="h-2" style={{ background: theme.gradient }} />
                 <div className="flex items-center gap-4 p-4">
-                  <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-2xl bg-slate-100">
+                  <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-800">
                     {pet.photo_url ? (
                       // eslint-disable-next-line @next/next/no-img-element -- foto subida por el usuario, servida desde /api/uploads
                       <img
@@ -64,10 +64,10 @@ export default async function PanelHomePage() {
                     )}
                   </div>
                   <div className="min-w-0">
-                    <p className="truncate font-heading font-semibold">
+                    <p className="truncate font-heading font-semibold dark:text-white">
                       {pet.name}
                     </p>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
                       {pet.species === "perro"
                         ? "Perro"
                         : pet.species === "gato"
@@ -75,7 +75,7 @@ export default async function PanelHomePage() {
                           : "Mascota"}
                       {pet.breed ? ` · ${pet.breed}` : ""}
                     </p>
-                    <p className="mt-1 text-xs text-slate-400">
+                    <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
                       {tag
                         ? `Tarjeta ${tag.code} activa`
                         : "Sin tarjeta NFC asignada"}
