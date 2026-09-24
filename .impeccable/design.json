@@ -1,0 +1,899 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-24T22:08:52.705Z",
+  "title": "Design System: ChapiTag NFC",
+  "extensions": {
+    "colorMeta": {
+      "aluminio": {
+        "role": "neutral",
+        "displayName": "Aluminio champagne",
+        "canonical": "#edebe7",
+        "tonalRamp": [
+          "oklch(15% 0.006 84.567)",
+          "oklch(25% 0.006 84.567)",
+          "oklch(35% 0.006 84.567)",
+          "oklch(45% 0.006 84.567)",
+          "oklch(55% 0.006 84.567)",
+          "oklch(70% 0.006 84.567)",
+          "oklch(85% 0.006 84.567)",
+          "oklch(95% 0.006 84.567)"
+        ]
+      },
+      "superficie": {
+        "role": "neutral",
+        "displayName": "Superficie",
+        "canonical": "#fbfaf8",
+        "tonalRamp": [
+          "oklch(15% 0.003 84.559)",
+          "oklch(25% 0.003 84.559)",
+          "oklch(35% 0.003 84.559)",
+          "oklch(45% 0.003 84.559)",
+          "oklch(55% 0.003 84.559)",
+          "oklch(70% 0.003 84.559)",
+          "oklch(85% 0.003 84.559)",
+          "oklch(95% 0.003 84.559)"
+        ]
+      },
+      "hueco": {
+        "role": "neutral",
+        "displayName": "Hueco del exhibidor",
+        "canonical": "#e1ddd6",
+        "tonalRamp": [
+          "oklch(15% 0.01 81.794)",
+          "oklch(25% 0.01 81.794)",
+          "oklch(35% 0.01 81.794)",
+          "oklch(45% 0.01 81.794)",
+          "oklch(55% 0.01 81.794)",
+          "oklch(70% 0.01 81.794)",
+          "oklch(85% 0.01 81.794)",
+          "oklch(95% 0.01 81.794)"
+        ]
+      },
+      "linea": {
+        "role": "neutral",
+        "displayName": "Línea",
+        "canonical": "#d6d2cb",
+        "tonalRamp": [
+          "oklch(15% 0.011 81.794)",
+          "oklch(25% 0.011 81.794)",
+          "oklch(35% 0.011 81.794)",
+          "oklch(45% 0.011 81.794)",
+          "oklch(55% 0.011 81.794)",
+          "oklch(70% 0.011 81.794)",
+          "oklch(85% 0.011 81.794)",
+          "oklch(95% 0.011 81.794)"
+        ]
+      },
+      "linea-fuerte": {
+        "role": "neutral",
+        "displayName": "Línea fuerte",
+        "canonical": "#aaa399",
+        "tonalRamp": [
+          "oklch(15% 0.016 77.032)",
+          "oklch(25% 0.016 77.032)",
+          "oklch(35% 0.016 77.032)",
+          "oklch(45% 0.016 77.032)",
+          "oklch(55% 0.016 77.032)",
+          "oklch(70% 0.016 77.032)",
+          "oklch(85% 0.016 77.032)",
+          "oklch(95% 0.016 77.032)"
+        ]
+      },
+      "grafito": {
+        "role": "neutral",
+        "displayName": "Grafito tibio",
+        "canonical": "#1c1a17",
+        "tonalRamp": [
+          "oklch(15% 0.007 78.185)",
+          "oklch(25% 0.007 78.185)",
+          "oklch(35% 0.007 78.185)",
+          "oklch(45% 0.007 78.185)",
+          "oklch(55% 0.007 78.185)",
+          "oklch(70% 0.007 78.185)",
+          "oklch(85% 0.007 78.185)",
+          "oklch(95% 0.007 78.185)"
+        ]
+      },
+      "grafito-2": {
+        "role": "neutral",
+        "displayName": "Grafito secundario",
+        "canonical": "#4c4741",
+        "tonalRamp": [
+          "oklch(15% 0.012 72.482)",
+          "oklch(25% 0.012 72.482)",
+          "oklch(35% 0.012 72.482)",
+          "oklch(45% 0.012 72.482)",
+          "oklch(55% 0.012 72.482)",
+          "oklch(70% 0.012 72.482)",
+          "oklch(85% 0.012 72.482)",
+          "oklch(95% 0.012 72.482)"
+        ]
+      },
+      "grafito-3": {
+        "role": "neutral",
+        "displayName": "Grafito terciario",
+        "canonical": "#655f57",
+        "tonalRamp": [
+          "oklch(15% 0.015 75.242)",
+          "oklch(25% 0.015 75.242)",
+          "oklch(35% 0.015 75.242)",
+          "oklch(45% 0.015 75.242)",
+          "oklch(55% 0.015 75.242)",
+          "oklch(70% 0.015 75.242)",
+          "oklch(85% 0.015 75.242)",
+          "oklch(95% 0.015 75.242)"
+        ]
+      },
+      "bronce-chapitag": {
+        "role": "primary",
+        "displayName": "Bronce ChapiTag anodizado",
+        "canonical": "#6e4b2a",
+        "tonalRamp": [
+          "oklch(15% 0.067 62.948)",
+          "oklch(25% 0.067 62.948)",
+          "oklch(35% 0.067 62.948)",
+          "oklch(45% 0.067 62.948)",
+          "oklch(55% 0.067 62.948)",
+          "oklch(70% 0.067 62.948)",
+          "oklch(85% 0.067 62.948)",
+          "oklch(95% 0.067 62.948)"
+        ]
+      },
+      "bronce-profundo": {
+        "role": "primary",
+        "displayName": "Bronce profundo",
+        "canonical": "#563a20",
+        "tonalRamp": [
+          "oklch(15% 0.056 62.627)",
+          "oklch(25% 0.056 62.627)",
+          "oklch(35% 0.056 62.627)",
+          "oklch(45% 0.056 62.627)",
+          "oklch(55% 0.056 62.627)",
+          "oklch(70% 0.056 62.627)",
+          "oklch(85% 0.056 62.627)",
+          "oklch(95% 0.056 62.627)"
+        ]
+      },
+      "metal-grabado": {
+        "role": "primary",
+        "displayName": "Metal grabado",
+        "canonical": "#f4efe8",
+        "tonalRamp": [
+          "oklch(15% 0.011 76.598)",
+          "oklch(25% 0.011 76.598)",
+          "oklch(35% 0.011 76.598)",
+          "oklch(45% 0.011 76.598)",
+          "oklch(55% 0.011 76.598)",
+          "oklch(70% 0.011 76.598)",
+          "oklch(85% 0.011 76.598)",
+          "oklch(95% 0.011 76.598)"
+        ]
+      },
+      "bronce-lavado": {
+        "role": "primary",
+        "displayName": "Bronce lavado",
+        "canonical": "#eee4d8",
+        "tonalRamp": [
+          "oklch(15% 0.019 72.566)",
+          "oklch(25% 0.019 72.566)",
+          "oklch(35% 0.019 72.566)",
+          "oklch(45% 0.019 72.566)",
+          "oklch(55% 0.019 72.566)",
+          "oklch(70% 0.019 72.566)",
+          "oklch(85% 0.019 72.566)",
+          "oklch(95% 0.019 72.566)"
+        ]
+      },
+      "naranja-perdida": {
+        "role": "tertiary",
+        "displayName": "Naranja perdida (reservado)",
+        "canonical": "#ff5b14",
+        "tonalRamp": [
+          "oklch(15% 0.103 39.111)",
+          "oklch(25% 0.145 39.111)",
+          "oklch(35% 0.187 39.111)",
+          "oklch(45% 0.211 39.111)",
+          "oklch(55% 0.211 39.111)",
+          "oklch(70% 0.207 39.111)",
+          "oklch(85% 0.145 39.111)",
+          "oklch(95% 0.103 39.111)"
+        ]
+      },
+      "naranja-perdida-hover": {
+        "role": "tertiary",
+        "displayName": "Naranja perdida hover",
+        "canonical": "#ff6f30",
+        "tonalRamp": [
+          "oklch(15% 0.103 41.61)",
+          "oklch(25% 0.145 41.61)",
+          "oklch(35% 0.19 41.61)",
+          "oklch(45% 0.19 41.61)",
+          "oklch(55% 0.19 41.61)",
+          "oklch(70% 0.19 41.61)",
+          "oklch(85% 0.145 41.61)",
+          "oklch(95% 0.103 41.61)"
+        ]
+      },
+      "naranja-perdida-profundo": {
+        "role": "tertiary",
+        "displayName": "Naranja perdida profundo",
+        "canonical": "#c93f00",
+        "tonalRamp": [
+          "oklch(15% 0.103 38.173)",
+          "oklch(25% 0.145 38.173)",
+          "oklch(35% 0.183 38.173)",
+          "oklch(45% 0.183 38.173)",
+          "oklch(55% 0.183 38.173)",
+          "oklch(70% 0.183 38.173)",
+          "oklch(85% 0.145 38.173)",
+          "oklch(95% 0.103 38.173)"
+        ]
+      },
+      "naranja-perdida-lavado": {
+        "role": "tertiary",
+        "displayName": "Naranja perdida lavado",
+        "canonical": "#fff0e7",
+        "tonalRamp": [
+          "oklch(15% 0.02 53.26)",
+          "oklch(25% 0.02 53.26)",
+          "oklch(35% 0.02 53.26)",
+          "oklch(45% 0.02 53.26)",
+          "oklch(55% 0.02 53.26)",
+          "oklch(70% 0.02 53.26)",
+          "oklch(85% 0.02 53.26)",
+          "oklch(95% 0.02 53.26)"
+        ]
+      },
+      "tinta-alerta": {
+        "role": "tertiary",
+        "displayName": "Tinta sobre alerta",
+        "canonical": "#15181c",
+        "tonalRamp": [
+          "oklch(15% 0.009 255.618)",
+          "oklch(25% 0.009 255.618)",
+          "oklch(35% 0.009 255.618)",
+          "oklch(45% 0.009 255.618)",
+          "oklch(55% 0.009 255.618)",
+          "oklch(70% 0.009 255.618)",
+          "oklch(85% 0.009 255.618)",
+          "oklch(95% 0.009 255.618)"
+        ]
+      },
+      "verde-ok": {
+        "role": "tertiary",
+        "displayName": "Verde ok",
+        "canonical": "#13704a",
+        "tonalRamp": [
+          "oklch(15% 0.103 159.967)",
+          "oklch(25% 0.103 159.967)",
+          "oklch(35% 0.103 159.967)",
+          "oklch(45% 0.103 159.967)",
+          "oklch(55% 0.103 159.967)",
+          "oklch(70% 0.103 159.967)",
+          "oklch(85% 0.103 159.967)",
+          "oklch(95% 0.103 159.967)"
+        ]
+      },
+      "verde-ok-lavado": {
+        "role": "tertiary",
+        "displayName": "Verde ok lavado",
+        "canonical": "#e2f0e8",
+        "tonalRamp": [
+          "oklch(15% 0.018 161.108)",
+          "oklch(25% 0.018 161.108)",
+          "oklch(35% 0.018 161.108)",
+          "oklch(45% 0.018 161.108)",
+          "oklch(55% 0.018 161.108)",
+          "oklch(70% 0.018 161.108)",
+          "oklch(85% 0.018 161.108)",
+          "oklch(95% 0.018 161.108)"
+        ]
+      },
+      "rojo-peligro": {
+        "role": "tertiary",
+        "displayName": "Rojo peligro",
+        "canonical": "#b8261c",
+        "tonalRamp": [
+          "oklch(15% 0.103 29.188)",
+          "oklch(25% 0.145 29.188)",
+          "oklch(35% 0.183 29.188)",
+          "oklch(45% 0.183 29.188)",
+          "oklch(55% 0.183 29.188)",
+          "oklch(70% 0.183 29.188)",
+          "oklch(85% 0.145 29.188)",
+          "oklch(95% 0.103 29.188)"
+        ]
+      },
+      "rojo-peligro-lavado": {
+        "role": "tertiary",
+        "displayName": "Rojo peligro lavado",
+        "canonical": "#fbebea",
+        "tonalRamp": [
+          "oklch(15% 0.017 21.81)",
+          "oklch(25% 0.017 21.81)",
+          "oklch(35% 0.017 21.81)",
+          "oklch(45% 0.017 21.81)",
+          "oklch(55% 0.017 21.81)",
+          "oklch(70% 0.017 21.81)",
+          "oklch(85% 0.017 21.81)",
+          "oklch(95% 0.017 21.81)"
+        ]
+      },
+      "metal-aro": {
+        "role": "neutral",
+        "displayName": "Metal del aro",
+        "canonical": "#9d9f9f",
+        "tonalRamp": [
+          "oklch(15% 0.002 197.104)",
+          "oklch(25% 0.002 197.104)",
+          "oklch(35% 0.002 197.104)",
+          "oklch(45% 0.002 197.104)",
+          "oklch(55% 0.002 197.104)",
+          "oklch(70% 0.002 197.104)",
+          "oklch(85% 0.002 197.104)",
+          "oklch(95% 0.002 197.104)"
+        ]
+      },
+      "metal-brillo": {
+        "role": "neutral",
+        "displayName": "Brillo del aro",
+        "canonical": "#e2e1dd",
+        "tonalRamp": [
+          "oklch(15% 0.005 95.105)",
+          "oklch(25% 0.005 95.105)",
+          "oklch(35% 0.005 95.105)",
+          "oklch(45% 0.005 95.105)",
+          "oklch(55% 0.005 95.105)",
+          "oklch(70% 0.005 95.105)",
+          "oklch(85% 0.005 95.105)",
+          "oklch(95% 0.005 95.105)"
+        ]
+      },
+      "verde-whatsapp": {
+        "role": "tertiary",
+        "displayName": "Verde WhatsApp",
+        "canonical": "#157a42",
+        "tonalRamp": [
+          "oklch(15% 0.103 152.853)",
+          "oklch(25% 0.124 152.853)",
+          "oklch(35% 0.124 152.853)",
+          "oklch(45% 0.124 152.853)",
+          "oklch(55% 0.124 152.853)",
+          "oklch(70% 0.124 152.853)",
+          "oklch(85% 0.124 152.853)",
+          "oklch(95% 0.103 152.853)"
+        ]
+      },
+      "noche-aluminio": {
+        "role": "neutral",
+        "displayName": "Aluminio de noche",
+        "canonical": "#141210",
+        "tonalRamp": [
+          "oklch(15% 0.005 67.497)",
+          "oklch(25% 0.005 67.497)",
+          "oklch(35% 0.005 67.497)",
+          "oklch(45% 0.005 67.497)",
+          "oklch(55% 0.005 67.497)",
+          "oklch(70% 0.005 67.497)",
+          "oklch(85% 0.005 67.497)",
+          "oklch(95% 0.005 67.497)"
+        ]
+      },
+      "noche-superficie": {
+        "role": "neutral",
+        "displayName": "Superficie de noche",
+        "canonical": "#1c1a17",
+        "tonalRamp": [
+          "oklch(15% 0.007 78.185)",
+          "oklch(25% 0.007 78.185)",
+          "oklch(35% 0.007 78.185)",
+          "oklch(45% 0.007 78.185)",
+          "oklch(55% 0.007 78.185)",
+          "oklch(70% 0.007 78.185)",
+          "oklch(85% 0.007 78.185)",
+          "oklch(95% 0.007 78.185)"
+        ]
+      },
+      "noche-tinta": {
+        "role": "neutral",
+        "displayName": "Tinta de noche",
+        "canonical": "#efebe5",
+        "tonalRamp": [
+          "oklch(15% 0.009 78.281)",
+          "oklch(25% 0.009 78.281)",
+          "oklch(35% 0.009 78.281)",
+          "oklch(45% 0.009 78.281)",
+          "oklch(55% 0.009 78.281)",
+          "oklch(70% 0.009 78.281)",
+          "oklch(85% 0.009 78.281)",
+          "oklch(95% 0.009 78.281)"
+        ]
+      },
+      "noche-bronce": {
+        "role": "primary",
+        "displayName": "Bronce de noche",
+        "canonical": "#86592f",
+        "tonalRamp": [
+          "oklch(15% 0.083 62.099)",
+          "oklch(25% 0.083 62.099)",
+          "oklch(35% 0.083 62.099)",
+          "oklch(45% 0.083 62.099)",
+          "oklch(55% 0.083 62.099)",
+          "oklch(70% 0.083 62.099)",
+          "oklch(85% 0.083 62.099)",
+          "oklch(95% 0.083 62.099)"
+        ]
+      },
+      "noche-bronce-texto": {
+        "role": "primary",
+        "displayName": "Bronce texto de noche",
+        "canonical": "#d6ab7a",
+        "tonalRamp": [
+          "oklch(15% 0.082 69.777)",
+          "oklch(25% 0.082 69.777)",
+          "oklch(35% 0.082 69.777)",
+          "oklch(45% 0.082 69.777)",
+          "oklch(55% 0.082 69.777)",
+          "oklch(70% 0.082 69.777)",
+          "oklch(85% 0.082 69.777)",
+          "oklch(95% 0.082 69.777)"
+        ]
+      },
+      "anod-azul": {
+        "role": "secondary",
+        "displayName": "Anodizado azul",
+        "canonical": "#1b46c2",
+        "tonalRamp": [
+          "oklch(15% 0.103 264.587)",
+          "oklch(25% 0.145 264.587)",
+          "oklch(35% 0.187 264.587)",
+          "oklch(45% 0.199 264.587)",
+          "oklch(55% 0.199 264.587)",
+          "oklch(70% 0.199 264.587)",
+          "oklch(85% 0.145 264.587)",
+          "oklch(95% 0.103 264.587)"
+        ]
+      },
+      "anod-rojo": {
+        "role": "secondary",
+        "displayName": "Anodizado rojo",
+        "canonical": "#b8261c",
+        "tonalRamp": [
+          "oklch(15% 0.103 29.188)",
+          "oklch(25% 0.145 29.188)",
+          "oklch(35% 0.183 29.188)",
+          "oklch(45% 0.183 29.188)",
+          "oklch(55% 0.183 29.188)",
+          "oklch(70% 0.183 29.188)",
+          "oklch(85% 0.145 29.188)",
+          "oklch(95% 0.103 29.188)"
+        ]
+      },
+      "anod-dorado": {
+        "role": "secondary",
+        "displayName": "Anodizado dorado",
+        "canonical": "#d6a21e",
+        "tonalRamp": [
+          "oklch(15% 0.103 84.128)",
+          "oklch(25% 0.145 84.128)",
+          "oklch(35% 0.145 84.128)",
+          "oklch(45% 0.145 84.128)",
+          "oklch(55% 0.145 84.128)",
+          "oklch(70% 0.145 84.128)",
+          "oklch(85% 0.145 84.128)",
+          "oklch(95% 0.103 84.128)"
+        ]
+      },
+      "anod-dorado-tinta": {
+        "role": "secondary",
+        "displayName": "Tinta del grabado dorado",
+        "canonical": "#1d1606",
+        "tonalRamp": [
+          "oklch(15% 0.03 86.651)",
+          "oklch(25% 0.03 86.651)",
+          "oklch(35% 0.03 86.651)",
+          "oklch(45% 0.03 86.651)",
+          "oklch(55% 0.03 86.651)",
+          "oklch(70% 0.03 86.651)",
+          "oklch(85% 0.03 86.651)",
+          "oklch(95% 0.03 86.651)"
+        ]
+      },
+      "anod-verde": {
+        "role": "secondary",
+        "displayName": "Anodizado verde",
+        "canonical": "#13704a",
+        "tonalRamp": [
+          "oklch(15% 0.103 159.967)",
+          "oklch(25% 0.103 159.967)",
+          "oklch(35% 0.103 159.967)",
+          "oklch(45% 0.103 159.967)",
+          "oklch(55% 0.103 159.967)",
+          "oklch(70% 0.103 159.967)",
+          "oklch(85% 0.103 159.967)",
+          "oklch(95% 0.103 159.967)"
+        ]
+      },
+      "anod-celeste": {
+        "role": "secondary",
+        "displayName": "Anodizado celeste",
+        "canonical": "#0b6d93",
+        "tonalRamp": [
+          "oklch(15% 0.1 232.167)",
+          "oklch(25% 0.1 232.167)",
+          "oklch(35% 0.1 232.167)",
+          "oklch(45% 0.1 232.167)",
+          "oklch(55% 0.1 232.167)",
+          "oklch(70% 0.1 232.167)",
+          "oklch(85% 0.1 232.167)",
+          "oklch(95% 0.1 232.167)"
+        ]
+      },
+      "anod-violeta": {
+        "role": "secondary",
+        "displayName": "Anodizado violeta",
+        "canonical": "#5b2bb5",
+        "tonalRamp": [
+          "oklch(15% 0.103 291.854)",
+          "oklch(25% 0.145 291.854)",
+          "oklch(35% 0.187 291.854)",
+          "oklch(45% 0.2 291.854)",
+          "oklch(55% 0.2 291.854)",
+          "oklch(70% 0.2 291.854)",
+          "oklch(85% 0.145 291.854)",
+          "oklch(95% 0.103 291.854)"
+        ]
+      },
+      "anod-rosa": {
+        "role": "secondary",
+        "displayName": "Anodizado rosa",
+        "canonical": "#b32a64",
+        "tonalRamp": [
+          "oklch(15% 0.103 0.179)",
+          "oklch(25% 0.145 0.179)",
+          "oklch(35% 0.178 0.179)",
+          "oklch(45% 0.178 0.179)",
+          "oklch(55% 0.178 0.179)",
+          "oklch(70% 0.178 0.179)",
+          "oklch(85% 0.145 0.179)",
+          "oklch(95% 0.103 0.179)"
+        ]
+      },
+      "anod-negro": {
+        "role": "secondary",
+        "displayName": "Anodizado negro",
+        "canonical": "#23262c",
+        "tonalRamp": [
+          "oklch(15% 0.012 264.35)",
+          "oklch(25% 0.012 264.35)",
+          "oklch(35% 0.012 264.35)",
+          "oklch(45% 0.012 264.35)",
+          "oklch(55% 0.012 264.35)",
+          "oklch(70% 0.012 264.35)",
+          "oklch(85% 0.012 264.35)",
+          "oklch(95% 0.012 264.35)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display expandida",
+        "purpose": "Titular del hero; container query para que entre la palabra más larga."
+      },
+      "headline": {
+        "displayName": "Titular de sección",
+        "purpose": "Titulares de la landing y del panel, Archivo 125% en 900."
+      },
+      "engraved-name": {
+        "displayName": "Nombre grabado",
+        "purpose": "Nombre de la mascota grabado sobre la chapita y el perfil; tamaño calculado por largo."
+      },
+      "title": {
+        "displayName": "Título",
+        "purpose": "Pasos y tarjetas, semiexpandida."
+      },
+      "body": {
+        "displayName": "Lectura",
+        "purpose": "Bajadas y texto corrido en grafito-2."
+      },
+      "body-sm": {
+        "displayName": "Lectura chica",
+        "purpose": "Navegación, avisos, pistas."
+      },
+      "label": {
+        "displayName": "Encabezado de bloque",
+        "purpose": "Encabezado de bloque de datos del perfil (Cómo es, Salud)."
+      },
+      "tag-code": {
+        "displayName": "Código de chapita",
+        "purpose": "Códigos en campos, dorso y admin; tabular espaciado."
+      }
+    },
+    "shadows": [
+      {
+        "name": "plate",
+        "value": "0 1px 2px rgb(28 26 23 / 0.06), 0 8px 24px -12px rgb(28 26 23 / 0.18)",
+        "purpose": "Placas de interfaz. Oscuro: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -12px rgb(0 0 0 / 0.6)."
+      },
+      {
+        "name": "tag",
+        "value": "0 18px 30px -14px rgb(28 26 23 / 0.45), 0 3px 6px rgb(28 26 23 / 0.14)",
+        "purpose": "Token --shadow-tag declarado para objetos colgados."
+      },
+      {
+        "name": "chapita-drop",
+        "value": "drop-shadow(0 max(2px, 10*escala) max(3px, 12*escala) rgb(21 24 28 / .32))",
+        "purpose": "Sombra de la silueta SVG de la chapita, proporcional al tamaño."
+      },
+      {
+        "name": "engraved-light",
+        "value": "text-shadow: 0 -1px 0 rgb(0 0 0 / 0.32), 0 1px 0 rgb(255 255 255 / 0.12)",
+        "purpose": "Filo del grabado claro sobre anodizado oscuro."
+      },
+      {
+        "name": "engraved-dark",
+        "value": "text-shadow: 0 1px 0 rgb(255 255 255 / 0.35), 0 -1px 0 rgb(0 0 0 / 0.1)",
+        "purpose": "Grabado relleno oscuro sobre anodizado claro (dorado)."
+      },
+      {
+        "name": "pressed",
+        "value": "inset 0 2px 3px rgb(0 0 0 / 0.28)",
+        "purpose": "Botón primario presionado."
+      },
+      {
+        "name": "focus-ring",
+        "value": "outline: 3px solid var(--focus); outline-offset: 3px",
+        "purpose": "Foco visible global."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.23, 1, 0.32, 1)",
+        "purpose": "Entradas, transiciones de estado, caída al gancho."
+      },
+      {
+        "name": "ease-in-out",
+        "value": "cubic-bezier(0.77, 0, 0.175, 1)",
+        "purpose": "Giro frente/dorso, cabeza ladeada."
+      },
+      {
+        "name": "dur-fast",
+        "value": "140ms",
+        "purpose": "Transiciones de botones, campos y casillas."
+      },
+      {
+        "name": "dur-base",
+        "value": "220ms",
+        "purpose": "Token base declarado."
+      },
+      {
+        "name": "swing",
+        "value": "1.5s linear, 7deg a 0deg amortiguado",
+        "purpose": "Péndulo desde el aro al hover (punteros finos) o al cambiar de color."
+      },
+      {
+        "name": "hang-in",
+        "value": "0.9s ease-out, escalonado 70-90ms",
+        "purpose": "La chapita cae al gancho al entrar en pantalla."
+      },
+      {
+        "name": "sway",
+        "value": "+-1.2deg, 5-7s ease-in-out infinito, desfasado",
+        "purpose": "Brisa de lo que cuelga del exhibidor."
+      },
+      {
+        "name": "engrave",
+        "value": "0.55s steps(14)",
+        "purpose": "Revelado del nombre de izquierda a derecha con punto láser."
+      },
+      {
+        "name": "flip",
+        "value": "0.7s ease-in-out, rotateY 180deg",
+        "purpose": "Giro frente/dorso; en el dorso, ondas NFC de 1.8s."
+      },
+      {
+        "name": "fade-in",
+        "value": "0.28s ease-out, 4px",
+        "purpose": "Aparición de formularios y bloques."
+      },
+      {
+        "name": "hang-on-view",
+        "value": "0.9s ease-out, escalonado 90ms",
+        "purpose": "Caída al gancho disparada al entrar en pantalla."
+      },
+      {
+        "name": "peek-up",
+        "value": "0.8s ease-out, desde translateY(46%), con demora",
+        "purpose": "Los animales se asoman desde el borde en el hero."
+      },
+      {
+        "name": "animals",
+        "value": "cola 3.2s / 5.5s, parpadeo 4.6s / 7s, oreja 6.5s, cabeza ladeada 1.3s, chapita del collar ±7deg 2.4s",
+        "purpose": "Loops lentos y desfasados del perro y el gato; la cabeza se ladea al grabar un nombre nuevo."
+      },
+      {
+        "name": "nfc-wave",
+        "value": "1.8s ease-out infinito, escalonado 0.6s",
+        "purpose": "Ondas que salen de la bobina cuando la chapita muestra el dorso."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "animation: none; flip sin transición; láser oculto",
+        "purpose": "Bajo prefers-reduced-motion todo se apaga o pasa a cambio directo, incluidos animales, brisa, asomarse y ondas NFC."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "container",
+        "value": "80rem"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botón primario",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Campo anodizado plano del contexto (por defecto bronce ChapiTag) con tinta de grabado. La acción principal de cada pantalla.",
+      "html": "<button class=\"ds-btn-primary\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0\"/><circle cx=\"12\" cy=\"10\" r=\"3\"/></svg>Abrir en el mapa</button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:3rem;padding:0 1.35rem;border-radius:999px;font-family:Archivo,ui-sans-serif,system-ui,sans-serif;font-weight:650;font-size:1rem;line-height:1.1;border:1.5px solid transparent;cursor:pointer;transition:background-color 140ms cubic-bezier(.23,1,.32,1),border-color 140ms cubic-bezier(.23,1,.32,1),transform 140ms cubic-bezier(.23,1,.32,1);background:var(--anod,#6e4b2a);color:var(--anod-ink,#f4efe8);} .ds-btn-primary:hover{background:var(--anod-deep,#563a20);} .ds-btn-primary:active{box-shadow:inset 0 2px 3px rgb(0 0 0 / .28);transform:translateY(1px);} .ds-btn-primary:focus-visible{outline:3px solid #6e4b2a;outline-offset:3px;}"
+    },
+    {
+      "name": "Botón secundario",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Superficie con borde fuerte, para la segunda acción.",
+      "html": "<button class=\"ds-btn-secondary\">Ver perfil de ejemplo</button>",
+      "css": ".ds-btn-secondary{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:3rem;padding:0 1.35rem;border-radius:999px;font-family:Archivo,ui-sans-serif,system-ui,sans-serif;font-weight:650;font-size:1rem;line-height:1.1;border:1.5px solid transparent;cursor:pointer;transition:background-color 140ms cubic-bezier(.23,1,.32,1),border-color 140ms cubic-bezier(.23,1,.32,1),transform 140ms cubic-bezier(.23,1,.32,1);background:#fbfaf8;color:#1c1a17;border-color:#aaa399;} .ds-btn-secondary:hover{border-color:#4c4741;background:#edebe7;} .ds-btn-secondary:active{transform:translateY(1px);} .ds-btn-secondary:focus-visible{outline:3px solid #6e4b2a;outline-offset:3px;}"
+    },
+    {
+      "name": "Botón de Instagram",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Secundario grande a todo el ancho en la barra de contacto del perfil, con glifo propio de trazo único (lucide v1 no trae marcas) y el @usuario truncado.",
+      "html": "<a class=\"ds-btn-ig\" href=\"#\" aria-label=\"Escribirle por Instagram a @familia.demo\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"2.5\" y=\"2.5\" width=\"19\" height=\"19\" rx=\"5.5\"/><circle cx=\"12\" cy=\"12\" r=\"4.2\"/><path d=\"M17.4 6.6h.01\"/></svg><span class=\"ds-trunc\">@familia.demo</span></a>",
+      "css": ".ds-btn-ig{display:flex;width:100%;max-width:22rem;align-items:center;justify-content:center;gap:.5rem;min-height:3.5rem;padding:0 1.75rem;border-radius:999px;font-family:Archivo,ui-sans-serif,system-ui,sans-serif;font-weight:650;font-size:1.0625rem;line-height:1.1;white-space:nowrap;text-decoration:none;border:1.5px solid #aaa399;background:#fbfaf8;color:#1c1a17;transition:background-color 140ms cubic-bezier(.23,1,.32,1),border-color 140ms cubic-bezier(.23,1,.32,1),transform 140ms cubic-bezier(.23,1,.32,1);} .ds-btn-ig > svg{flex-shrink:0;} .ds-trunc{overflow:hidden;text-overflow:ellipsis;} .ds-btn-ig:hover{border-color:#4c4741;background:#edebe7;} .ds-btn-ig:active{transform:translateY(1px);} .ds-btn-ig:focus-visible{outline:3px solid #6e4b2a;outline-offset:3px;}"
+    },
+    {
+      "name": "Botón de alerta",
+      "kind": "button",
+      "refersTo": "button-alert",
+      "description": "Naranja perdida con tinta-alerta. Solo activa el modo perdido.",
+      "html": "<button class=\"ds-btn-alert\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m3 11 18-5v12L3 14v-3z\"/><path d=\"M11.6 16.8a3 3 0 1 1-5.8-1.6\"/></svg>Activar modo perdido</button>",
+      "css": ".ds-btn-alert{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:3rem;padding:0 1.35rem;border-radius:999px;font-family:Archivo,ui-sans-serif,system-ui,sans-serif;font-weight:650;font-size:1rem;line-height:1.1;border:1.5px solid transparent;cursor:pointer;transition:background-color 140ms cubic-bezier(.23,1,.32,1),border-color 140ms cubic-bezier(.23,1,.32,1),transform 140ms cubic-bezier(.23,1,.32,1);background:#ff5b14;color:#15181c;} .ds-btn-alert:hover{background:#ff6f30;} .ds-btn-alert:active{transform:translateY(1px);} .ds-btn-alert:focus-visible{outline:3px solid #6e4b2a;outline-offset:3px;}"
+    },
+    {
+      "name": "Campo de texto",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "Superficie, borde 1.5px, radio 12px; foco con borde bronce y halo. Aquí con el estilo de código de chapita.",
+      "html": "<label class=\"ds-label\" for=\"ds-f\">Código de la chapita</label><input id=\"ds-f\" class=\"ds-field ds-code\" placeholder=\"K7M2 P9XQ\">",
+      "css": ".ds-label{display:block;margin-bottom:.4rem;font-family:Archivo,sans-serif;font-size:.9375rem;font-weight:600;color:#1c1a17;} .ds-field{display:block;width:100%;max-width:20rem;min-height:3rem;padding:.7rem .9rem;border-radius:12px;border:1.5px solid #aaa399;background:#fbfaf8;color:#1c1a17;font-family:Archivo,sans-serif;font-size:1rem;line-height:1.35;transition:border-color 140ms,box-shadow 140ms;} .ds-field::placeholder{color:#655f57;} .ds-field:hover{border-color:#655f57;} .ds-field:focus{outline:none;border-color:#6e4b2a;box-shadow:0 0 0 3px color-mix(in srgb,#6e4b2a 22%,transparent);} .ds-code{font-stretch:118%;font-weight:700;letter-spacing:.14em;font-variant-numeric:tabular-nums;text-transform:uppercase;font-size:1.125rem;}"
+    },
+    {
+      "name": "Chip de estado",
+      "kind": "chip",
+      "refersTo": "status-chip-lost",
+      "description": "Perdida (franja naranja, mayúsculas, megáfono) o En casa (verde lavado).",
+      "html": "<span class=\"ds-chip ds-chip-lost\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m3 11 18-5v12L3 14v-3z\"/><path d=\"M11.6 16.8a3 3 0 1 1-5.8-1.6\"/></svg>Perdida</span> <span class=\"ds-chip ds-chip-home\">En casa</span>",
+      "css": ".ds-chip{display:inline-flex;height:28px;align-items:center;gap:6px;border-radius:999px;padding:0 10px;font-family:Archivo,sans-serif;font-size:.8125rem;} .ds-chip-lost{background:#ff5b14;color:#15181c;font-weight:700;text-transform:uppercase;letter-spacing:.06em;} .ds-chip-home{background:#e2f0e8;color:#13704a;font-weight:600;}"
+    },
+    {
+      "name": "Placa",
+      "kind": "card",
+      "refersTo": "plate",
+      "description": "Superficie con borde de 1px, radio 22px y sombra de placa casi imperceptible.",
+      "html": "<div class=\"ds-plate\"><h3 class=\"ds-plate-h\">¿Ya tenés tu chapita?</h3><p class=\"ds-plate-p\">Escribí el código del dorso y activala en dos minutos.</p></div>",
+      "css": ".ds-plate{background:#fbfaf8;border:1px solid #d6d2cb;border-radius:22px;box-shadow:0 1px 2px rgb(28 26 23 / .06),0 8px 24px -12px rgb(28 26 23 / .18);padding:24px;max-width:28rem;font-family:Archivo,sans-serif;color:#1c1a17;} .ds-plate-h{margin:0;font-stretch:125%;font-weight:900;font-size:1.9rem;line-height:1;letter-spacing:-.025em;} .ds-plate-p{margin:.75rem 0 0;font-size:1.0625rem;color:#4c4741;}"
+    },
+    {
+      "name": "Navegación",
+      "kind": "nav",
+      "refersTo": "nav",
+      "description": "Cabecera plana sobre aluminio: enlaces grafito-2 y primario pequeño.",
+      "html": "<nav class=\"ds-nav\"><span class=\"ds-brand\">ChapiTag</span><a class=\"ds-nav-a\" href=\"#\">Cómo funciona</a><a class=\"ds-nav-a\" href=\"#\">Ingresar</a><a class=\"ds-nav-cta\" href=\"#\">Activar chapita</a></nav>",
+      "css": ".ds-nav{display:flex;align-items:center;gap:4px;padding:8px 16px;background:#edebe7;border-bottom:1px solid #d6d2cb;font-family:Archivo,sans-serif;} .ds-brand{font-stretch:125%;font-weight:800;margin-right:auto;color:#1c1a17;} .ds-nav-a{display:inline-flex;height:44px;align-items:center;padding:0 12px;border-radius:999px;font-size:.9375rem;font-weight:600;color:#4c4741;text-decoration:none;} .ds-nav-a:hover{color:#1c1a17;} .ds-nav-a:focus-visible,.ds-nav-cta:focus-visible{outline:3px solid #6e4b2a;outline-offset:3px;} .ds-nav-cta{display:inline-flex;min-height:2.5rem;align-items:center;padding:0 1rem;border-radius:999px;background:#6e4b2a;color:#f4efe8;font-weight:650;font-size:.9375rem;text-decoration:none;margin-left:4px;} .ds-nav-cta:hover{background:#563a20;}"
+    },
+    {
+      "name": "Campo anodizado con nombre grabado",
+      "kind": "custom",
+      "refersTo": "engraved-name",
+      "description": "Cabecera del perfil: anodizado plano con cepillado casi invisible y nombre grabado (metal claro, filo oscuro arriba). El dorado usa grabado relleno oscuro.",
+      "html": "<div class=\"ds-anod\"><span class=\"ds-engraved\">Firulais</span></div><div class=\"ds-anod ds-anod-gold\"><span class=\"ds-engraved ds-engraved-dark\">Luna</span></div>",
+      "css": ".ds-anod{background-color:#1b46c2;background-image:repeating-linear-gradient(0deg,rgb(255 255 255 / .028) 0 1px,transparent 1px 3px);padding:20px 16px;margin-bottom:8px;} .ds-anod-gold{background-color:#d6a21e;} .ds-engraved{font-family:Archivo,sans-serif;font-stretch:125%;font-weight:900;text-transform:uppercase;font-size:3rem;line-height:.92;letter-spacing:-.01em;color:#eef1f5;text-shadow:0 -1px 0 rgb(0 0 0 / .32),0 1px 0 rgb(255 255 255 / .12);} .ds-engraved-dark{color:#1d1606;text-shadow:0 1px 0 rgb(255 255 255 / .35),0 -1px 0 rgb(0 0 0 / .1);}"
+    },
+    {
+      "name": "Exhibidor perforado",
+      "kind": "custom",
+      "refersTo": "pegboard",
+      "description": "Trama de agujeros cada 30px de donde cuelgan las chapitas, con gancho metálico; fondo de sección o de tramo.",
+      "html": "<div class=\"ds-pegboard\"><span class=\"ds-hook\"></span><span class=\"ds-tag\"></span></div>",
+      "css": ".ds-pegboard{display:flex;flex-direction:column;align-items:center;padding:0 0 24px;height:180px;border-radius:22px;border:1px solid #d6d2cb;background-color:#e1ddd6;background-image:radial-gradient(circle at center,rgb(28 26 23 / .2) 0 2.4px,rgb(255 255 255 / .5) 2.4px 3.2px,transparent 3.2px);background-size:30px 30px;background-position:15px 15px;} .ds-hook{display:block;width:10px;height:24px;border-radius:0 0 6px 6px;background:#9d9f9f;box-shadow:0 2px 2px rgb(0 0 0 / .2);} .ds-tag{display:block;width:110px;height:110px;margin-top:10px;border-radius:999px;background:#13704a;box-shadow:0 0 0 1.5px rgb(0 0 0 / .24);filter:drop-shadow(0 6px 7px rgb(21 24 28 / .32));}"
+    },
+    {
+      "name": "Perro con chapita",
+      "kind": "custom",
+      "refersTo": "animals",
+      "description": "Silueta plana de dos tonos (grafito con detalles en el color del fondo), collar y chapita anodizada dorada que se hamaca; parpadea. Todo quieto bajo prefers-reduced-motion.",
+      "html": "<svg class=\"ds-dog\" viewBox=\"0 0 160 200\" width=\"140\" role=\"img\" aria-label=\"Un perro con su chapita\"><path d=\"M60 110 C 50 140 50 170 56 196 H 104 C 110 170 110 140 100 110 Z\" fill=\"#1c1a17\"/><path d=\"M68 150 V 193 M92 150 V 193\" stroke=\"#edebe7\" stroke-width=\"2.6\" stroke-linecap=\"round\" opacity=\".55\"/><path d=\"M80 18 C 103 18 116 34 116 56 C 116 78 101 94 80 94 C 59 94 44 78 44 56 C 44 34 57 18 80 18 Z\" fill=\"#1c1a17\"/><path d=\"M72 67 C 72 62 88 62 88 67 C 88 72 83 75 80 75 C 77 75 72 72 72 67 Z\" fill=\"#edebe7\" opacity=\".35\"/><g class=\"ds-blink\"><circle cx=\"66\" cy=\"50\" r=\"5.2\" fill=\"#edebe7\"/><circle cx=\"94\" cy=\"50\" r=\"5.2\" fill=\"#edebe7\"/><circle cx=\"66.6\" cy=\"50.6\" r=\"3.2\" fill=\"#1c1a17\"/><circle cx=\"94.6\" cy=\"50.6\" r=\"3.2\" fill=\"#1c1a17\"/></g><path d=\"M58 98 Q 80 106 102 98\" stroke=\"#b8261c\" stroke-width=\"6\" fill=\"none\" stroke-linecap=\"round\"/><g class=\"ds-collar-tag\"><circle cx=\"80\" cy=\"102\" r=\"3.4\" fill=\"none\" stroke=\"#9d9f9f\" stroke-width=\"2.2\"/><circle cx=\"80\" cy=\"116\" r=\"10\" fill=\"#d6a21e\"/><circle cx=\"80\" cy=\"107.2\" r=\"1.6\" fill=\"#edebe7\"/></g></svg>",
+      "css": ".ds-dog{display:block;} .ds-blink{transform-origin:80px 50px;animation:ds-blink 4.6s linear infinite;} .ds-collar-tag{transform-origin:80px 100px;animation:ds-tag 2.4s ease-in-out infinite;} @keyframes ds-blink{0%,93%,100%{transform:scaleY(1)}95.5%{transform:scaleY(.08)}} @keyframes ds-tag{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}} @media (prefers-reduced-motion: reduce){.ds-blink,.ds-collar-tag{animation:none;}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Grabado sobre anodizado",
+    "overview": "Cada mascota es una chapita. El sistema entero sale de un objeto real: un disco de aluminio anodizado, con agujero y aro partido, colgado de un exhibidor perforado, al que la fresa le saca el color para escribir el nombre. El color anodizado es la identidad de la mascota; el texto importante no se pinta, se graba. El fondo es aluminio champagne (un gris apenas tibio, no crema), la tinta es grafito tibio, la marca es un bronce anodizado, y el único color que grita es el naranja del modo perdido.\n\nLa densidad es de ficha, no de revista: una sola familia tipográfica (Archivo, de Omnibus-Type, Buenos Aires) cambia de ancho en vez de cambiar de fuente. Expandida y negra para lo grabado y los titulares, normal para leer, mayúsculas espaciadas y tabulares para los códigos. El tamaño marca la jerarquía, el color marca el estado. La profundidad es la del objeto (la chapita cuelga, proyecta sombra, se da vuelta); las superficies de interfaz son planas.\n\nEl movimiento es el de algo que cuelga: cae al gancho, se mece con la brisa, se hamaca al pasarle por encima, se da vuelta para mostrar el dorso con la bobina NFC. La fresa recorre el nombre de izquierda a derecha. Un perro y un gato planos, de dos tonos y con su chapita en el collar, mueven la cola, parpadean y ladean la cabeza cuando oyen un nombre nuevo. Todo eso se apaga bajo `prefers-reduced-motion`. Se rechaza la landing de mascotas de siempre (pasteles, huellitas, blobs) y su opuesto tech oscuro con neón.",
+    "keyCharacteristics": [
+      "Campos planos de anodizado a escala de región, uno por mascota (8 colores fijos).",
+      "Texto grabado: metal claro con filo oscuro de 1px arriba; relleno de tinta oscura sobre anodizados claros (dorado).",
+      "Una sola familia, Archivo variable, con el eje de ancho como herramienta de jerarquía.",
+      "Naranja de alerta reservado por ley al estado \"perdida\".",
+      "Silueta de chapita (disco, hueso, gato; siempre con agujero y aro), exhibidor perforado y animales planos de dos tonos con collar y chapita como únicos recursos decorativos; nunca huellitas.",
+      "Íconos lucide de trazo único; las marcas que lucide no trae (Instagram) van con un glifo propio del mismo trazo; nunca emoji.",
+      "Perfil público, afiche y hoja de QR siempre en esquema claro."
+    ],
+    "rules": [
+      {
+        "name": "The Perdida Rule",
+        "body": "El naranja #ff5b14 existe solo para el estado \"perdida\" y lo que lo anuncia (franja, chip, botón que lo activa, afiche, la sección de la landing que lo explica). Ningún CTA, ícono, gráfico ni acento usa naranja por otro motivo.",
+        "section": "colors"
+      },
+      {
+        "name": "The Anodized Identity Rule",
+        "body": "El color de la mascota es su identidad: se aplica en campos planos a escala de región (cabecera del perfil, chapita, primario del contexto), nunca como acento suelto ni en degradé.",
+        "section": "colors"
+      },
+      {
+        "name": "The Always-Light Rule",
+        "body": "El perfil público, el afiche \"Se busca\", la hoja de QR para imprenta y el mail de ejemplo se renderizan con `.scheme-light`, aunque el dispositivo esté en oscuro: se leen al sol o en papel.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Family Rule",
+        "body": "Todo es Archivo. La jerarquía se hace con ancho (88 / 100 / 112 / 118 / 125%), peso y tamaño; nunca se suma una segunda familia ni una monoespaciada.",
+        "section": "typography"
+      },
+      {
+        "name": "The Engraved Width Rule",
+        "body": "Lo que va grabado sobre anodizado usa el ancho expandido (125%) en 800-900. El ancho normal es para leer.",
+        "section": "typography"
+      },
+      {
+        "name": "The Object-Has-Depth Rule",
+        "body": "Solo las cosas que cuelgan (chapita, gancho, aro) tienen volumen. Botones, campos y placas son planos; no llevan bisel ni brillo.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** grabar el texto importante sobre anodizado: tinta metal-grabado con filo oscuro de 1px arriba, y relleno oscuro con `data-engrave=\"dark\"` sobre el dorado.",
+      "**Do** usar el anodizado de la mascota como campo plano a escala de región (cabecera del perfil, chapita, primario), a través de `--anod`, `--anod-deep`, `--anod-ink`.",
+      "**Do** hacer la jerarquía con Archivo: expandida 125% en 800-900 para lo grabado y titulares, 100% para leer, 118% tabular espaciado para códigos.",
+      "**Do** usar íconos lucide de trazo único, a 18-24px, heredando color; para una marca que lucide no trae, dibujar un glifo SVG propio con el mismo trazo.",
+      "**Do** colgar las piezas decorativas de un gancho con la silueta de chapita, con su aro y su agujero.",
+      "**Do** renderizar perfil público, afiche y hoja de QR con `.scheme-light`.",
+      "**Do** dar a cada animación una alternativa quieta dentro del bloque `prefers-reduced-motion`."
+    ],
+    "donts": [
+      "**Don't** usar el naranja #ff5b14 para nada que no sea el estado \"perdida\".",
+      "**Don't** agregar bisel, brillo ni degradé a botones, campos o placas; son campos planos.",
+      "**Don't** usar texto con degradé, blobs ni motivo de huellitas.",
+      "**Don't** usar emoji como ícono ni como decoración.",
+      "**Don't** sumar una segunda familia tipográfica ni una monoespaciada.",
+      "**Don't** poner texto blanco sobre el naranja de alerta; va en grafito.",
+      "**Don't** inventar anodizados fuera de los ocho del catálogo.",
+      "**Don't** usar el azul #1b46c2 como color de marca; es solo el anodizado \"Azul\" de una mascota."
+    ]
+  }
+}

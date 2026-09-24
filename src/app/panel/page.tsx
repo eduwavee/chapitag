@@ -1,105 +1,105 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { ChevronRight, Plus, Smartphone } from "lucide-react";
 import { requireOwnerSession } from "@/lib/auth";
 import { listPetsByOwner } from "@/lib/repo/pets";
-import { findActiveTagForPet } from "@/lib/repo/tags";
-import { getTheme } from "@/lib/themes";
-import { getBadge, parseBadges } from "@/lib/badges";
-import { ScrollReveal } from "@/components/ScrollReveal";
+import { formatCode, speciesLabel, timeAgo } from "@/lib/ui";
+import { PetChapita } from "@/components/PetChapita";
+import { Dog } from "@/components/Animals";
+import { FormMessage } from "@/components/form";
+import { StatusChip } from "./StatusChip";
 
-export default async function PanelHomePage() {
+export const metadata: Metadata = { title: "Mis mascotas" };
+
+export default async function PanelHomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ borrada?: string }>;
+}) {
   const session = await requireOwnerSession();
   const pets = session ? listPetsByOwner(session.sub) : [];
+  const { borrada } = await searchParams;
 
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <h1 className="font-heading text-2xl font-bold dark:text-white">Mis mascotas</h1>
-        <Link
-          href="/panel/mascotas/nueva"
-          className="press-scale hover-lift rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700"
-        >
-          + Registrar mascota
-        </Link>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <h1 className="font-wide text-[2rem] font-extrabold leading-none tracking-tight sm:text-[2.5rem]">Mis mascotas</h1>
+        {pets.length > 0 && (
+          <Link href="/panel/mascotas/nueva" className="btn btn-primary">
+            <Plus size={20} aria-hidden />
+            Activar otra chapita
+          </Link>
+        )}
       </div>
 
-      {pets.length === 0 ? (
-        <div className="mt-8 rounded-3xl border border-dashed bg-white p-10 text-center dark:border-slate-700 dark:bg-slate-900">
-          <p className="text-4xl">🐾</p>
-          <p className="mt-2 text-slate-600 dark:text-slate-400">
-            Todavía no registraste ninguna mascota.
-          </p>
-          <Link
-            href="/panel/mascotas/nueva"
-            className="mt-4 inline-block font-medium text-indigo-600 dark:text-indigo-400"
-          >
-            Registrar mi primera mascota →
-          </Link>
+      {borrada === "1" && (
+        <div className="mt-6 max-w-xl">
+          <FormMessage success="Borramos el perfil. La chapita quedó libre para activarla de nuevo." />
         </div>
+      )}
+
+      {pets.length === 0 ? (
+        <section className="plate mt-8 grid overflow-hidden md:grid-cols-2">
+          <div className="pegboard flex items-end justify-center gap-6 border-b border-line px-6 pt-8 md:border-b-0 md:border-r">
+            <div className="flex flex-col items-center self-start">
+              <span className="block h-7 w-3 rounded-b-md bg-[var(--metal)]" />
+              <p className="mt-3 max-w-[10rem] text-center text-[0.9375rem] font-semibold text-ink-2">
+                Este gancho está esperando su chapita.
+              </p>
+            </div>
+            <Dog size={130} tagTheme="classic" tiltKey={1} className="-mb-1 h-auto w-[130px]" />
+          </div>
+          <div className="p-6 sm:p-10">
+            <h2 className="font-semiwide text-2xl font-bold tracking-tight">Activá tu primera chapita</h2>
+            <p className="mt-2 text-[1.0625rem] text-ink-2">
+              Necesitás el código impreso en el dorso. Cargás los datos de tu mascota, elegís el color y queda lista
+              para que cualquiera la escanee.
+            </p>
+            <Link href="/panel/mascotas/nueva" className="btn btn-primary btn-lg mt-6">
+              Activar chapita
+            </Link>
+          </div>
+        </section>
       ) : (
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          {pets.map((pet, i) => {
-            const tag = findActiveTagForPet(pet.id);
-            const theme = getTheme(pet.theme);
-            const badges = parseBadges(pet.badges);
-            return (
-              <ScrollReveal key={pet.id} delay={Math.min(i, 5) * 0.06} variant="scale">
+        <ul className="mt-8 grid gap-4 md:grid-cols-2">
+          {pets.map((pet) => (
+            <li key={pet.id}>
               <Link
                 href={`/panel/mascotas/${pet.id}`}
-                className="group hover-lift hover-lift-lg block overflow-hidden rounded-3xl border bg-white shadow-sm hover:shadow-lg dark:border-slate-800 dark:bg-slate-900 dark:hover:shadow-slate-900/60"
+                className={`plate group flex items-center gap-4 p-4 pr-5 no-underline transition-[border-color,box-shadow] hover:border-line-strong sm:gap-5 ${
+                  pet.lost ? "!border-2 !border-alert" : ""
+                }`}
               >
-                <div className="h-2" style={{ background: theme.gradient }} />
-                <div className="flex items-center gap-4 p-4">
-                  <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-800">
-                    {pet.photo_url ? (
-                      // eslint-disable-next-line @next/next/no-img-element -- foto subida por el usuario, servida desde /api/uploads
-                      <img
-                        src={pet.photo_url}
-                        alt={pet.name}
-                        className="h-full w-full object-cover"
-                      />
+                <PetChapita themeId={pet.theme} name={pet.name} photoUrl={pet.photo_url} size={92} className="swing-on-group" />
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h2 className="font-semiwide truncate text-xl font-extrabold tracking-tight text-ink">{pet.name}</h2>
+                    <StatusChip lost={!!pet.lost} />
+                  </div>
+                  <p className="mt-0.5 truncate text-[0.9375rem] text-ink-2">
+                    {speciesLabel(pet.species)}
+                    {pet.breed ? ` · ${pet.breed}` : ""}
+                  </p>
+                  <p className="mt-2 flex items-center gap-1.5 text-sm text-ink-3">
+                    <Smartphone size={15} aria-hidden />
+                    {pet.last_scan_at ? `Escaneada ${timeAgo(pet.last_scan_at)}` : "Todavía nadie la escaneó"}
+                    {pet.scans_7d > 1 ? ` · ${pet.scans_7d} veces esta semana` : ""}
+                  </p>
+                  <p className="mt-1 text-sm text-ink-3">
+                    {pet.tag_code ? (
+                      <>
+                        Chapita <span className="tag-code text-ink-2">{formatCode(pet.tag_code)}</span>
+                      </>
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center text-2xl">
-                        {theme.emoji}
-                      </div>
+                      "Sin chapita activa"
                     )}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="truncate font-heading font-semibold dark:text-white">
-                      {pet.name}
-                    </p>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">
-                      {pet.species === "perro"
-                        ? "Perro"
-                        : pet.species === "gato"
-                          ? "Gato"
-                          : "Mascota"}
-                      {pet.breed ? ` · ${pet.breed}` : ""}
-                    </p>
-                    <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
-                      {tag
-                        ? `Tarjeta ${tag.code} activa`
-                        : "Sin tarjeta NFC asignada"}
-                    </p>
-                    {badges.length > 0 && (
-                      <div className="mt-1.5 flex flex-wrap gap-1">
-                        {badges.slice(0, 3).map((key) => {
-                          const badge = getBadge(key);
-                          if (!badge) return null;
-                          return (
-                            <span key={key} title={badge.label} className="text-sm">
-                              {badge.emoji}
-                            </span>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
+                  </p>
                 </div>
+                <ChevronRight size={22} className="shrink-0 text-ink-3 transition-transform group-hover:translate-x-0.5" aria-hidden />
               </Link>
-              </ScrollReveal>
-            );
-          })}
-        </div>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );

@@ -1,16 +1,7 @@
-"use client";
-
 /**
- * `template.tsx` se re-monta en cada navegación (a diferencia de `layout.tsx`),
- * así que es el lugar para la transición de entrada del área de contenido del
- * panel. El header vive en `layout.tsx` → no se re-anima, queda como ancla
- * espacial fija. Fade + micro-desplazamiento; `.reveal`/reduced-motion ya
- * neutraliza el movimiento vía la media query de globals.css.
+ * `template.tsx` se re-monta en cada navegación: un fundido corto del área de
+ * contenido. El header vive en el layout y no se re-anima.
  */
-export default function PanelTemplate({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function PanelTemplate({ children }: { children: React.ReactNode }) {
   return <div className="anim-route">{children}</div>;
 }

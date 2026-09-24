@@ -1,231 +1,123 @@
-import { findPetByTagCode } from "@/lib/repo/pets";
-import { listPetPhotos } from "@/lib/repo/petPhotos";
-import { getTheme } from "@/lib/themes";
-import { getBadge, parseBadges } from "@/lib/badges";
-import { PhotoGallery } from "@/components/PhotoGallery";
-import { waLink, formatRelativeTime } from "@/lib/ui";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { Eye, Pencil } from "lucide-react";
+import { getSession } from "@/lib/auth";
+import { speciesLabel, formatCode } from "@/lib/ui";
+import { Brand } from "@/components/Brand";
+import { Chapita, NfcCoil } from "@/components/Chapita";
+import { PetProfile } from "@/components/profile/PetProfile";
+import { ScanBeacon } from "@/components/profile/ScanBeacon";
+import { toProfileData } from "@/components/profile/profileData";
+import { getTagView } from "./data";
 
-export default async function PublicPetPage({
-  params,
-}: {
-  params: Promise<{ code: string }>;
-}) {
+type Props = { params: Promise<{ code: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { code } = await params;
-  const result = findPetByTagCode(code);
+  const view = getTagView(code);
+  // Los perfiles tienen teléfonos: fuera de los buscadores siempre.
+  const robots = { index: false, follow: false };
 
-  if (!result) {
-    return (
-      <div className="flex flex-1 items-center justify-center px-6 py-16 text-center">
-        <div>
-          <p className="text-5xl">🏷️</p>
-          <h1 className="mt-4 text-xl font-bold">
-            Esta tarjeta todavía no fue activada
-          </h1>
-          <p className="mt-2 max-w-sm text-slate-600">
-            Si sos el dueño de esta mascota, ingresá a tu cuenta para asociar
-            esta tarjeta a su perfil.
-          </p>
-        </div>
-      </div>
-    );
+  if (view.state !== "assigned") {
+    return { title: "Chapita ChapiTag", robots };
+  }
+  const { pet } = view;
+  const title = pet.lost ? `¿Viste a ${pet.name}? Se busca` : `${pet.name} · ${speciesLabel(pet.species)}`;
+  const description = pet.lost
+    ? `${pet.name} se perdió${pet.city ? ` en ${pet.city}` : ""}. Si la ves, abrí este link para avisarle a su familia.`
+    : `Si encontraste a ${pet.name}, desde acá podés avisarle a su familia.`;
+  return {
+    title,
+    description,
+    robots,
+    openGraph: { title, description, type: "profile" },
+    twitter: { card: "summary_large_image", title, description },
+  };
+}
+
+export default async function PublicPetPage({ params }: Props) {
+  const { code } = await params;
+  const view = getTagView(code);
+
+  if (view.state === "missing") notFound();
+
+  if (view.state === "unassigned" || view.state === "revoked") {
+    return <InactiveTag code={view.tag.code} revoked={view.state === "revoked"} />;
   }
 
-  const { pet } = result;
-  const theme = getTheme(pet.theme);
-  const badges = parseBadges(pet.badges);
-  const photos = listPetPhotos(pet.id);
-  const fallbackEmoji =
-    pet.species === "perro" ? "🐶" : pet.species === "gato" ? "🐱" : "🐾";
-  const galleryPhotos = [
-    ...(pet.photo_url ? [pet.photo_url] : []),
-    ...photos.map((p) => p.url),
-  ];
-
-  const speciesLabel =
-    pet.species === "perro" ? "Perro" : pet.species === "gato" ? "Gato" : "Mascota";
-  const age = pet.birth_year
-    ? new Date().getFullYear() - pet.birth_year
-    : null;
-  const locationText = pet.show_exact_address
-    ? [pet.address, pet.city].filter(Boolean).join(", ")
-    : pet.city || null;
-
-  const waText = `Hola! Encontré a ${pet.name}, vi tu contacto en su chapita NFC.`;
+  const { pet, tag } = view;
+  const session = await getSession();
+  const isOwner = session?.role === "OWNER" && session.sub === pet.owner_id;
+  const data = toProfileData(pet, view.photos, tag.code);
 
   return (
-    <div
-      className="bg-grain relative flex-1 overflow-hidden pb-10"
-      style={{ background: theme.gradient }}
-    >
-      {/* soft decorative blobs — a light tint that reads well on any theme gradient */}
-      <div
-        className="deco-blob h-56 w-56 bg-white/30"
-        style={{ top: "-60px", left: "-70px", animation: "float-a 8s ease-in-out infinite" }}
-      />
-      <div
-        className="deco-blob h-48 w-48 bg-white/20"
-        style={{ bottom: "40px", right: "-60px", animation: "float-b 9s ease-in-out infinite" }}
-      />
-
-      <div className="relative z-10 mx-auto w-full max-w-md px-4 pt-6">
-        <p
-          className="anim-load-2 text-center text-sm font-semibold uppercase tracking-wide"
-          style={{ color: theme.onGradientText }}
-        >
-          {theme.emoji} ¡Me perdí! Ayudame a volver a casa
-        </p>
-
-        <div className="anim-card-in mt-4 overflow-hidden rounded-3xl border bg-white shadow-xl">
-          <PhotoGallery
-            photos={galleryPhotos}
-            petName={pet.name}
-            fallbackEmoji={fallbackEmoji}
-          />
-
-          <div className="p-6">
-            <div className="flex items-center justify-between gap-2">
-              <h1 className="text-3xl font-extrabold">{pet.name}</h1>
-            </div>
-            <p className="mt-1 text-slate-600">
-              {speciesLabel}
-              {pet.breed ? ` · ${pet.breed}` : ""}
-              {pet.color ? ` · ${pet.color}` : ""}
-              {age !== null ? ` · ${age} años` : ""}
-              {pet.sex ? ` · ${pet.sex === "macho" ? "Macho" : "Hembra"}` : ""}
+    <div className="flex flex-1 flex-col bg-ground">
+      {isOwner && (
+        <div className="scheme-light border-b border-line bg-surface px-4 py-2.5">
+          <div className="mx-auto flex max-w-[30rem] flex-wrap items-center justify-between gap-2 text-[0.9375rem]">
+            <p className="flex items-center gap-2 text-ink-2">
+              <Eye size={18} aria-hidden />
+              Así lo ve quien encuentra a {pet.name}.
             </p>
-
-            {(badges.length > 0 || pet.sterilized) && (
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                {!!pet.sterilized && (
-                  <Pill className="bg-indigo-100 text-indigo-800" delay={0}>
-                    ✂️ Esterilizado/a
-                  </Pill>
-                )}
-                {badges.map((key, i) => {
-                  const badge = getBadge(key);
-                  if (!badge) return null;
-                  return (
-                    <Pill
-                      key={key}
-                      className={badge.className}
-                      delay={(pet.sterilized ? 1 : 0) + i}
-                    >
-                      {badge.emoji} {badge.label}
-                    </Pill>
-                  );
-                })}
-              </div>
-            )}
-
-            {pet.personality && (
-              <p className="mt-3 text-sm italic text-slate-600">
-                “{pet.personality}”
-              </p>
-            )}
-
-            {pet.reward_offered && (
-              <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-sm font-medium text-amber-800">
-                🎁 {pet.reward_offered}
-              </p>
-            )}
-
-            {(pet.medical_notes || pet.microchip_number) && (
-              <div className="mt-4 rounded-xl bg-slate-50 p-3 text-sm text-slate-700">
-                {pet.microchip_number && (
-                  <p>
-                    <span className="font-medium">Microchip:</span>{" "}
-                    {pet.microchip_number}
-                  </p>
-                )}
-                {pet.medical_notes && (
-                  <p className="mt-1">
-                    <span className="font-medium">Info médica:</span>{" "}
-                    {pet.medical_notes}
-                  </p>
-                )}
-              </div>
-            )}
-
-            {(pet.vet_name || pet.vet_phone || pet.insurance_info) && (
-              <div className="mt-3 rounded-xl bg-sky-50 p-3 text-sm text-sky-900">
-                {(pet.vet_name || pet.vet_phone) && (
-                  <p>
-                    <span className="font-medium">🩺 Veterinario/a:</span>{" "}
-                    {pet.vet_name}
-                    {pet.vet_name && pet.vet_phone ? " · " : ""}
-                    {pet.vet_phone}
-                  </p>
-                )}
-                {pet.insurance_info && (
-                  <p className="mt-1">
-                    <span className="font-medium">Seguro:</span>{" "}
-                    {pet.insurance_info}
-                  </p>
-                )}
-              </div>
-            )}
-
-            {locationText && (
-              <p className="mt-3 text-sm text-slate-600">
-                📍 Vive por: {locationText}
-              </p>
-            )}
-
-            <div className="mt-6 space-y-3">
-              <a
-                href={`tel:${pet.contact_phone}`}
-                className="flex w-full items-center justify-center gap-2 rounded-full px-4 py-3 font-semibold text-white shadow-sm transition hover:opacity-90"
-                style={{ background: theme.accent }}
-              >
-                📞 Llamar a {pet.contact_name}
-              </a>
-              {pet.contact_whatsapp && (
-                <a
-                  href={waLink(pet.contact_whatsapp, waText)}
-                  target="_blank"
-                  className="flex w-full items-center justify-center gap-2 rounded-full bg-green-600 px-4 py-3 font-semibold text-white shadow-sm hover:bg-green-700"
-                >
-                  💬 WhatsApp
-                </a>
-              )}
-              {pet.contact_phone2 && (
-                <a
-                  href={`tel:${pet.contact_phone2}`}
-                  className="flex w-full items-center justify-center gap-2 rounded-full border border-slate-300 px-4 py-3 font-semibold text-slate-700 hover:bg-slate-50"
-                >
-                  📞 {pet.contact_name2 || "Contacto alternativo"}
-                </a>
-              )}
-            </div>
+            <Link href={`/panel/mascotas/${pet.id}`} className="btn btn-secondary btn-sm">
+              <Pencil size={16} aria-hidden />
+              Ir al panel
+            </Link>
           </div>
         </div>
-
-        <p
-          className="mt-6 text-center text-xs"
-          style={{ color: theme.onGradientText, opacity: 0.8 }}
-        >
-          Perfil {formatRelativeTime(pet.updated_at)} · provisto por ChapiTag NFC
-        </p>
-      </div>
+      )}
+      <main className="mx-auto flex w-full max-w-[30rem] flex-1 flex-col">
+        <PetProfile data={data} />
+      </main>
+      {!isOwner && <ScanBeacon code={tag.code} />}
     </div>
   );
 }
 
-function Pill({
-  children,
-  className,
-  delay = 0,
-}: {
-  children: React.ReactNode;
-  className: string;
-  delay?: number;
-}) {
+/** Chapita que existe pero no tiene perfil: sin activar o dada de baja. */
+function InactiveTag({ code, revoked }: { code: string; revoked: boolean }) {
   return (
-    <span
-      className={`anim-pop-in inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${className}`}
-      style={{ animationDelay: `${0.5 + delay * 0.1}s` }}
-    >
-      {children}
-    </span>
+    <main className="scheme-light flex flex-1 flex-col bg-ground text-ink">
+      <div className="mx-auto flex w-full max-w-[30rem] flex-1 flex-col px-5 pb-10 pt-6">
+        <Brand />
+        <div className="pegboard mt-6 flex justify-center rounded-[22px] py-8">
+          <Chapita themeId={revoked ? "midnight" : "classic"} size={180}>
+            <NfcCoil size={52} className="text-[var(--anod-ink)] opacity-80" />
+            <span className="engraved tag-code mt-3 text-[0.95rem]">{formatCode(code)}</span>
+          </Chapita>
+        </div>
+
+        <h1 className="font-wide mt-8 text-[2rem] font-extrabold leading-[1.05] tracking-tight">
+          {revoked ? "Esta chapita fue dada de baja" : "Esta chapita todavía no está activada"}
+        </h1>
+
+        <section className="mt-5 space-y-2" aria-labelledby="h-encontre">
+          <h2 id="h-encontre" className="text-lg font-bold">
+            ¿Encontraste una mascota con esta chapita?
+          </h2>
+          <p className="text-[1.0625rem] leading-relaxed text-ink-2">
+            {revoked
+              ? "Su dueño la reemplazó por otra o la reportó perdida, así que no tiene datos de contacto."
+              : "Su dueño todavía no cargó los datos."}{" "}
+            Podés llevarla a la veterinaria más cercana: si tiene microchip, lo pueden leer.
+          </p>
+        </section>
+
+        {!revoked && (
+          <section className="plate mt-6 p-5" aria-labelledby="h-activar">
+            <h2 id="h-activar" className="text-lg font-bold">
+              ¿Es tu chapita?
+            </h2>
+            <p className="mt-1 text-ink-2">
+              Activala en dos minutos: creás el perfil de tu mascota y queda lista para escanear.
+            </p>
+            <Link href={`/activar?codigo=${encodeURIComponent(code)}`} className="btn btn-primary btn-lg mt-4 w-full">
+              Activar esta chapita
+            </Link>
+          </section>
+        )}
+      </div>
+    </main>
   );
 }

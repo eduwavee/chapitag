@@ -23,11 +23,13 @@ function initDb(): DatabaseSync {
   db.exec("PRAGMA journal_mode = WAL;");
   db.exec("PRAGMA foreign_keys = ON;");
 
+  // Primero las columnas nuevas (para bases creadas con un schema anterior),
+  // después el schema completo: así los índices nuevos encuentran sus columnas.
+  migrate(db);
+
   const schemaPath = path.join(process.cwd(), "src", "lib", "schema.sql");
   const schema = fs.readFileSync(schemaPath, "utf-8");
   db.exec(schema);
-
-  migrate(db);
 
   return db;
 }
@@ -47,6 +49,14 @@ function migrate(db: DatabaseSync) {
   ensureColumn(db, "pets", "insurance_info", "TEXT");
   ensureColumn(db, "pets", "personality", "TEXT");
   ensureColumn(db, "pets", "contact_name2", "TEXT");
+  ensureColumn(db, "pets", "contact_instagram", "TEXT");
+  ensureColumn(db, "pets", "lost", "INTEGER NOT NULL DEFAULT 0");
+  ensureColumn(db, "pets", "lost_since", "TEXT");
+  ensureColumn(db, "pets", "lost_note", "TEXT");
+  ensureColumn(db, "pets", "notify_scans", "INTEGER NOT NULL DEFAULT 1");
+  ensureColumn(db, "pets", "last_scan_email_at", "TEXT");
+  ensureColumn(db, "users", "session_version", "INTEGER NOT NULL DEFAULT 0");
+  ensureColumn(db, "admin_users", "session_version", "INTEGER NOT NULL DEFAULT 0");
 }
 
 function ensureColumn(
@@ -58,6 +68,8 @@ function ensureColumn(
   const columns = db.prepare(`PRAGMA table_info(${table})`).all() as {
     name: string;
   }[];
+  // Tabla inexistente (base nueva): la crea el schema con todas sus columnas.
+  if (columns.length === 0) return;
   if (columns.some((c) => c.name === column)) return;
   db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${ddl}`);
 }
@@ -67,4 +79,21 @@ function ensureColumn(
 export const db: DatabaseSync = global.__chapitagDb ?? initDb();
 if (process.env.NODE_ENV !== "production") {
   global.__chapitagDb = db;
+}
+
+/**
+ * Corre `fn` dentro de una transacción. Si tira error, se deshace todo.
+ * `BEGIN IMMEDIATE` toma el lock de escritura al empezar, así dos requests
+ * que intentan activar la misma chapita no pueden pisarse.
+ */
+export function transaction<T>(fn: () => T): T {
+  db.exec("BEGIN IMMEDIATE");
+  try {
+    const result = fn();
+    db.exec("COMMIT");
+    return result;
+  } catch (err) {
+    db.exec("ROLLBACK");
+    throw err;
+  }
 }
