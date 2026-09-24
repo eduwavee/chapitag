@@ -1,52 +1,70 @@
 // Insignias de estado opcionales para el perfil de la mascota. Se guardan
 // como un array JSON de "key" en pets.badges. El campo `sterilized` no vive
-// acá: ya es su propia columna/checkbox y se muestra como pill aparte para no
-// duplicar la misma información en dos lugares.
+// acá: ya es su propia columna/checkbox y se muestra aparte.
+//
+// `caution` marca las que le importan a quien la encuentra para manejar al
+// animal con cuidado (medicación, reactivo, etc.): se muestran primero y con
+// más peso en el perfil público.
+
+export type BadgeIcon =
+  | "syringe"
+  | "pill"
+  | "smile"
+  | "footprints"
+  | "accessibility"
+  | "alert";
 
 export interface PetBadge {
   key: string;
   label: string;
-  emoji: string;
-  /** Clases Tailwind (estáticas, no dinámicas) para la pill. */
-  className: string;
+  /** Texto de ayuda para quien encuentra a la mascota. */
+  hint: string;
+  icon: BadgeIcon;
+  caution: boolean;
 }
 
 export const PET_BADGES: PetBadge[] = [
   {
-    key: "vaccinated",
-    label: "Vacunado/a",
-    emoji: "💉",
-    className: "bg-sky-100 text-sky-800",
-  },
-  {
     key: "needs_medication",
     label: "Necesita medicación",
-    emoji: "💊",
-    className: "bg-rose-100 text-rose-800",
-  },
-  {
-    key: "friendly",
-    label: "Sociable",
-    emoji: "😄",
-    className: "bg-amber-100 text-amber-800",
-  },
-  {
-    key: "shy",
-    label: "Tímido/a",
-    emoji: "🙈",
-    className: "bg-slate-200 text-slate-700",
-  },
-  {
-    key: "special_needs",
-    label: "Necesidades especiales",
-    emoji: "⚠️",
-    className: "bg-orange-100 text-orange-800",
+    hint: "Toma medicación diaria: avisá cuanto antes.",
+    icon: "pill",
+    caution: true,
   },
   {
     key: "reactive",
     label: "Reactivo con otros animales",
-    emoji: "🐕",
-    className: "bg-fuchsia-100 text-fuchsia-800",
+    hint: "Mantenelo lejos de otros perros o gatos.",
+    icon: "alert",
+    caution: true,
+  },
+  {
+    key: "special_needs",
+    label: "Necesidades especiales",
+    hint: "Puede necesitar ayuda extra.",
+    icon: "accessibility",
+    caution: true,
+  },
+  {
+    key: "shy",
+    label: "Tímido/a",
+    hint: "Acercate despacio y sin correr.",
+    icon: "footprints",
+    caution: false,
+  },
+  {
+    key: "friendly",
+    label: "Sociable",
+    hint: "Se deja acercar y tocar.",
+    icon: "smile",
+    caution: false,
+  },
+  {
+    key: "vaccinated",
+    label: "Vacunado/a",
+    hint: "Tiene sus vacunas al día.",
+    icon: "syringe",
+    caution: false,
   },
 ];
 
@@ -70,4 +88,9 @@ export function serializeBadges(keys: string[]): string {
 
 export function getBadge(key: string): PetBadge | undefined {
   return BADGE_MAP.get(key);
+}
+
+/** Insignias en orden de importancia para quien encuentra: primero las de cuidado. */
+export function sortedBadges(keys: string[]): PetBadge[] {
+  return PET_BADGES.filter((b) => keys.includes(b.key));
 }

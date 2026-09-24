@@ -1,18 +1,32 @@
-import type { Metadata } from "next";
-import { Baloo_2 } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Archivo } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
-const baloo = Baloo_2({
+// Archivo es de Omnibus-Type (Buenos Aires). Variable en peso y ancho: el
+// eje `wdth` expandido es la letra del grabado; el normal, la de lectura.
+const archivo = Archivo({
   subsets: ["latin"],
-  weight: ["600", "700", "800"],
-  variable: "--font-heading",
+  axes: ["wdth"],
+  variable: "--font-archivo",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "ChapiTag NFC — Chapitas inteligentes para mascotas",
+  metadataBase: process.env.APP_URL ? new URL(process.env.APP_URL) : undefined,
+  title: {
+    default: "ChapiTag — la chapita NFC que trae a tu mascota de vuelta",
+    template: "%s · ChapiTag",
+  },
   description:
-    "Chapitas con tarjeta NFC para mascotas: quien la encuentre puede ver los datos de contacto del dueño al instante, sin instalar ninguna app.",
+    "Chapitas NFC para mascotas. Quien la encuentra acerca el celular, sin instalar nada, y ve cómo avisarte al instante. Perfil editable, modo perdido y aviso por email cuando la escanean.",
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#edebe7" },
+    { media: "(prefers-color-scheme: dark)", color: "#141210" },
+  ],
 };
 
 export default function RootLayout({
@@ -22,12 +36,18 @@ export default function RootLayout({
 }) {
   return (
     <html
-      lang="es"
-      className={`h-full antialiased ${baloo.variable}`}
+      lang="es-AR"
+      className={`h-full antialiased ${archivo.variable}`}
       suppressHydrationWarning
     >
-      <body className="flex min-h-full flex-col bg-slate-50 font-sans text-slate-900 dark:bg-slate-950 dark:text-slate-100">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <head>
+        {/* Sin JavaScript no hay animación de entrada: lo que espera "caer al gancho" se muestra directo. */}
+        <noscript>
+          <style>{`.hang-on-view{opacity:1!important}`}</style>
+        </noscript>
+      </head>
+      <body className="flex min-h-full flex-col font-sans">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
         </ThemeProvider>
       </body>

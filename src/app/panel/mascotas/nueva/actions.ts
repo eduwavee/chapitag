@@ -5,6 +5,8 @@ import { requireOwnerSession } from "@/lib/auth";
 import { createPetWithTag } from "@/lib/repo/pets";
 import { addPetPhoto } from "@/lib/repo/petPhotos";
 import { parsePetForm } from "@/lib/parsePetForm";
+import { deleteUploadedFile } from "@/lib/upload";
+import { formValues } from "@/lib/formValues";
 import type { PetFormState } from "@/components/PetForm";
 
 export async function createPetAction(
@@ -14,25 +16,26 @@ export async function createPetAction(
   const session = await requireOwnerSession();
   if (!session) redirect("/ingresar");
 
+  const values = formValues(formData);
   const tagCode = String(formData.get("tagCode") || "").trim();
   if (!tagCode) {
-    return { error: "Ingresá el código de la tarjeta NFC." };
+    return { error: "Falta el código de la chapita (está impreso en el dorso).", values };
   }
 
   const parsed = await parsePetForm(formData);
-  if (!parsed.ok) return { error: parsed.error };
+  if (!parsed.ok) return { error: parsed.error, values };
 
   const result = createPetWithTag(session.sub, parsed.input, tagCode);
   if (!result.ok) {
-    if (result.error === "TAG_NOT_FOUND") {
-      return {
-        error:
-          "No encontramos ninguna tarjeta con ese código. Revisá que esté bien escrito.",
-      };
-    }
+    // Las fotos ya se guardaron: se borran para no dejar archivos huérfanos.
+    deleteUploadedFile(parsed.input.photoUrl);
+    parsed.galleryPhotoUrls.forEach(deleteUploadedFile);
     return {
       error:
-        "Esa tarjeta ya está asignada a otra mascota o fue dada de baja.",
+        result.error === "TAG_NOT_FOUND"
+          ? "No encontramos una chapita con ese código. Revisá que esté bien escrito (son 8 letras y números). Las fotos hay que volver a elegirlas."
+          : "Esa chapita ya está activada o fue dada de baja. Las fotos hay que volver a elegirlas.",
+      values,
     };
   }
 

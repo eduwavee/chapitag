@@ -38,6 +38,7 @@ export async function GET(
   return new NextResponse(new Uint8Array(data), {
     headers: {
       "Content-Type": contentType,
+      "X-Content-Type-Options": "nosniff",
       // Los nombres son UUID aleatorios (no se reutilizan), así que se
       // pueden cachear "para siempre" en el navegador/CDN sin riesgo.
       "Cache-Control": "public, max-age=31536000, immutable",

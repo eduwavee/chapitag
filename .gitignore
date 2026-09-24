@@ -45,3 +45,10 @@ data/*.db*
 public/uploads/*
 !public/uploads/.gitkeep
 data/uploads/*
+
+# impeccable: capturas de revisión, vistas previas y archivos locales (se regeneran)
+.impeccable/review/
+.impeccable/mocks/
+.impeccable/questions/
+.impeccable/build/
+.impeccable/*.local.json

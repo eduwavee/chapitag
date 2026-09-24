@@ -1,38 +1,42 @@
 "use client";
 
-import { useActionState } from "react";
-import { SPECIES_OPTIONS, SEX_OPTIONS } from "@/lib/ui";
-import { PET_THEMES, DEFAULT_THEME_ID } from "@/lib/themes";
+import { useActionState, useState } from "react";
+import { Cat, Dog, Rabbit } from "lucide-react";
+import { SEX_OPTIONS } from "@/lib/ui";
+import { PET_THEMES, DEFAULT_THEME_ID, getTheme } from "@/lib/themes";
 import { PET_BADGES } from "@/lib/badges";
-import { ScrollReveal } from "@/components/ScrollReveal";
-import { Spinner } from "@/components/Spinner";
+import { MAX_GALLERY_PHOTOS } from "@/lib/limits";
+import { listOf, valueOf, type FormValues } from "@/lib/formValues";
+import { Chapita, EngravedName } from "@/components/Chapita";
+import { CheckField, Field, FormMessage, SelectField, SubmitButton, TextArea } from "@/components/form";
 
 export interface PetFormDefaults {
   name?: string;
   species?: string;
-  breed?: string;
-  color?: string;
-  sex?: string;
+  breed?: string | null;
+  color?: string | null;
+  sex?: string | null;
   birthYear?: number | null;
   sterilized?: boolean;
-  microchipNumber?: string;
-  medicalNotes?: string;
-  rewardOffered?: string;
-  contactName?: string;
-  contactPhone?: string;
-  contactWhatsapp?: string;
-  contactPhone2?: string;
-  contactName2?: string;
-  city?: string;
-  address?: string;
+  microchipNumber?: string | null;
+  medicalNotes?: string | null;
+  rewardOffered?: string | null;
+  contactName?: string | null;
+  contactPhone?: string | null;
+  contactWhatsapp?: string | null;
+  contactPhone2?: string | null;
+  contactName2?: string | null;
+  contactInstagram?: string | null;
+  city?: string | null;
+  address?: string | null;
   showExactAddress?: boolean;
   photoUrl?: string | null;
   theme?: string;
   badges?: string[];
-  vetName?: string;
-  vetPhone?: string;
-  insuranceInfo?: string;
-  personality?: string;
+  vetName?: string | null;
+  vetPhone?: string | null;
+  insuranceInfo?: string | null;
+  personality?: string | null;
 }
 
 export interface ExistingPhoto {
@@ -40,438 +44,334 @@ export interface ExistingPhoto {
   url: string;
 }
 
-export type PetFormState = { error?: string };
+export type PetFormState = { error?: string; values?: FormValues };
+
+const SPECIES = [
+  { value: "perro", label: "Perro", Icon: Dog },
+  { value: "gato", label: "Gato", Icon: Cat },
+  { value: "otro", label: "Otro", Icon: Rabbit },
+];
 
 export function PetForm({
   action,
-  defaults,
+  defaults = {},
   existingPhotos = [],
+  tagCode,
   showTagCodeField,
   submitLabel,
 }: {
-  action: (
-    prevState: PetFormState | undefined,
-    formData: FormData
-  ) => Promise<PetFormState>;
+  action: (prevState: PetFormState | undefined, formData: FormData) => Promise<PetFormState>;
   defaults?: PetFormDefaults;
   existingPhotos?: ExistingPhoto[];
+  /** Código precargado (al activar desde el escaneo o /activar). */
+  tagCode?: string;
   showTagCodeField: boolean;
   submitLabel: string;
 }) {
-  const [state, formAction, pending] = useActionState(action, {});
-  const selectedBadges = new Set(defaults?.badges || []);
-  const gallerySlotsLeft = Math.max(0, 4 - existingPhotos.length);
+  const [state, formAction] = useActionState(action, {});
+  const sent = state.values;
+  // Si la action devolvió un error, lo enviado manda sobre los datos guardados.
+  const v = (key: string, fallback?: string | number | null) =>
+    sent ? (valueOf(sent, key) ?? "") : (fallback ?? undefined);
+  const checked = (key: string, fallback?: boolean) => (sent ? valueOf(sent, key) === "on" : !!fallback);
+
+  const [name, setName] = useState(String(v("name", defaults.name) ?? ""));
+  const [themeId, setThemeId] = useState(String(v("theme", defaults.theme) || DEFAULT_THEME_ID));
+  const selectedBadges = new Set(sent ? (listOf(sent, "badges") ?? []) : (defaults.badges ?? []));
+  const species = String(v("species", defaults.species) || "perro");
+  const gallerySlotsLeft = Math.max(0, MAX_GALLERY_PHOTOS - existingPhotos.length);
+  const theme = getTheme(themeId);
 
   return (
-    <form action={formAction} className="space-y-8">
-      {showTagCodeField && (
-        <Section title="Tarjeta NFC" emoji="🏷️" delay={0}>
+    <form action={formAction} className="grid gap-8 lg:grid-cols-12 lg:items-start" key={JSON.stringify(sent ?? {})}>
+      <div className="space-y-6 lg:col-span-8">
+        {showTagCodeField && (
+          <Section title="La chapita" description="El código está impreso en el dorso: 8 letras y números.">
+            <Field
+              label="Código de la chapita"
+              name="tagCode"
+              required
+              autoComplete="off"
+              autoCapitalize="characters"
+              spellCheck={false}
+              placeholder="K7M2 P9XQ"
+              defaultValue={v("tagCode", tagCode)}
+              className="max-w-xs"
+              inputClassName="tag-code text-lg uppercase"
+            />
+          </Section>
+        )}
+
+        <Section title="Tu mascota">
           <Field
-            label="Código de la tarjeta"
-            name="tagCode"
-            placeholder="Ej: K7M2P9XQ"
+            label="Nombre"
+            name="name"
             required
+            maxLength={40}
+            defaultValue={v("name", defaults.name)}
+            onChange={(e) => setName(e.currentTarget.value)}
           />
-          <p className="-mt-2 text-xs text-slate-500 dark:text-slate-400">
-            Es el código impreso en la chapita/tarjeta que compraste.
-          </p>
-        </Section>
-      )}
-
-      <Section title="Datos de la mascota" emoji="🐾" delay={showTagCodeField ? 0.08 : 0}>
-        <Field
-          label="Nombre"
-          name="name"
-          required
-          defaultValue={defaults?.name}
-        />
-        <label className="block text-sm">
-          <span className="mb-1 block font-medium text-slate-700 dark:text-slate-300">
-            Especie
-          </span>
-          <select
-            name="species"
-            required
-            defaultValue={defaults?.species || "perro"}
-            className={selectClass}
-          >
-            {SPECIES_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-        </label>
-        <div className="grid grid-cols-2 gap-4">
-          <Field label="Raza" name="breed" defaultValue={defaults?.breed} />
-          <Field label="Color" name="color" defaultValue={defaults?.color} />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <label className="block text-sm">
-            <span className="mb-1 block font-medium text-slate-700 dark:text-slate-300">
-              Sexo
-            </span>
-            <select
-              name="sex"
-              defaultValue={defaults?.sex || ""}
-              className={selectClass}
-            >
-              <option value="">Sin especificar</option>
-              {SEX_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <Field
-            label="Año de nacimiento"
-            name="birthYear"
-            type="number"
-            defaultValue={defaults?.birthYear ?? undefined}
-          />
-        </div>
-        <label className="flex items-center gap-2 text-sm dark:text-slate-300">
-          <input
-            type="checkbox"
-            name="sterilized"
-            defaultChecked={defaults?.sterilized}
-            className="h-4 w-4 rounded border-slate-300 text-indigo-600 dark:border-slate-600 dark:bg-slate-800"
-          />
-          Está castrado/a
-        </label>
-        <TextArea
-          label="Personalidad / carácter (opcional)"
-          name="personality"
-          placeholder="Ej: Juguetón, le encanta la pelota, un poco miedoso con los truenos"
-          defaultValue={defaults?.personality}
-        />
-      </Section>
-
-      <Section title="Personalización del perfil" emoji="🎨" delay={showTagCodeField ? 0.16 : 0.08}>
-        <div>
-          <span className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
-            Tema de color
-          </span>
-          <div className="grid grid-cols-4 gap-3 sm:grid-cols-8">
-            {PET_THEMES.map((theme) => (
-              <label key={theme.id} className="cursor-pointer text-center">
-                <input
-                  type="radio"
-                  name="theme"
-                  value={theme.id}
-                  defaultChecked={
-                    (defaults?.theme || DEFAULT_THEME_ID) === theme.id
-                  }
-                  className="peer sr-only"
-                />
-                <span
-                  style={{ background: theme.gradient }}
-                  className="flex h-12 w-12 items-center justify-center rounded-2xl text-xl shadow-sm ring-2 ring-transparent ring-offset-2 transition duration-200 [transition-timing-function:var(--ease-spring)] peer-checked:scale-110 peer-checked:ring-slate-900 dark:ring-offset-slate-900 dark:peer-checked:ring-white"
-                >
-                  {theme.emoji}
-                </span>
-                <span className="mt-1 block text-[11px] text-slate-600 dark:text-slate-400">
-                  {theme.label}
-                </span>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <span className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
-            Insignias de estado (opcional)
-          </span>
-          <div className="flex flex-wrap gap-2">
-            {PET_BADGES.map((badge) => (
-              <label key={badge.key} className="cursor-pointer">
-                <input
-                  type="checkbox"
-                  name="badges"
-                  value={badge.key}
-                  defaultChecked={selectedBadges.has(badge.key)}
-                  className="peer sr-only"
-                />
-                <span
-                  className={`inline-flex items-center gap-1.5 rounded-full border border-transparent px-3 py-1.5 text-sm font-medium text-slate-500 ring-1 ring-slate-200 transition peer-checked:text-slate-900 peer-checked:ring-2 peer-checked:ring-indigo-500 dark:text-slate-400 dark:ring-slate-700 dark:peer-checked:text-white ${badge.className} peer-checked:opacity-100 opacity-60 peer-checked:border-transparent dark:opacity-50 dark:peer-checked:opacity-90`}
-                >
-                  {badge.emoji} {badge.label}
-                </span>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <span className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
-            Foto de portada (JPG, PNG o WEBP, máx. 5MB)
-          </span>
-          <Field label="" name="photo" type="file" hideLabel />
-        </div>
-
-        {existingPhotos.length > 0 && (
-          <div>
-            <span className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
-              Fotos de la galería actuales
-            </span>
-            <div className="flex flex-wrap gap-3">
-              {existingPhotos.map((photo) => (
-                <label
-                  key={photo.id}
-                  className="group relative h-20 w-20 cursor-pointer overflow-hidden rounded-xl border dark:border-slate-700"
-                >
-                  <input
-                    type="checkbox"
-                    name="deletePhotoIds"
-                    value={photo.id}
-                    className="peer sr-only"
-                  />
-                  {/* eslint-disable-next-line @next/next/no-img-element -- foto subida por el usuario, servida desde /api/uploads */}
-                  <img
-                    src={photo.url}
-                    alt="Foto de la galería"
-                    className="h-full w-full object-cover"
-                  />
-                  <span className="absolute inset-0 flex items-center justify-center bg-red-600/0 text-xs font-semibold text-transparent transition peer-checked:bg-red-600/70 peer-checked:text-white">
-                    Eliminar
+          <fieldset>
+            <legend className="label">Especie</legend>
+            <div className="grid grid-cols-3 gap-2 sm:max-w-md">
+              {SPECIES.map(({ value, label, Icon }) => (
+                <label key={value} className="cursor-pointer">
+                  <input type="radio" name="species" value={value} defaultChecked={species === value} className="peer sr-only" />
+                  <span className="flex min-h-12 items-center justify-center gap-2 rounded-xl border-[1.5px] border-line-strong bg-surface font-semibold text-ink-2 transition-colors peer-checked:border-brand peer-checked:bg-brand-wash peer-checked:text-ink peer-focus-visible:outline peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--focus)]">
+                    <Icon size={20} aria-hidden />
+                    {label}
                   </span>
                 </label>
               ))}
             </div>
-            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-              Marcá una foto para eliminarla al guardar.
-            </p>
+          </fieldset>
+          <div className="grid gap-5 sm:grid-cols-2">
+            <Field label="Raza" name="breed" maxLength={60} placeholder="Ej: Mestizo" defaultValue={v("breed", defaults.breed)} />
+            <Field label="Color de pelo" name="color" maxLength={60} placeholder="Ej: Marrón y blanco" defaultValue={v("color", defaults.color)} />
+            <SelectField
+              label="Sexo"
+              name="sex"
+              defaultValue={String(v("sex", defaults.sex) ?? "")}
+              options={[{ value: "", label: "Sin especificar" }, ...SEX_OPTIONS]}
+            />
+            <Field
+              label="Año de nacimiento"
+              name="birthYear"
+              type="number"
+              inputMode="numeric"
+              min={new Date().getFullYear() - 40}
+              max={new Date().getFullYear()}
+              placeholder={String(new Date().getFullYear() - 3)}
+              defaultValue={v("birthYear", defaults.birthYear)}
+            />
           </div>
-        )}
+          <CheckField name="sterilized" label="Está castrado/a" defaultChecked={checked("sterilized", defaults.sterilized)} />
+        </Section>
 
-        {gallerySlotsLeft > 0 && (
-          <div>
-            <span className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
-              Agregar fotos a la galería (hasta {gallerySlotsLeft} más)
-            </span>
-            <input
+        <Section title="Color de la chapita" description="Es el color de su perfil: lo primero que ve quien la encuentra.">
+          <div className="flex items-center gap-5 lg:hidden">
+            <Chapita theme={theme} size={104} shadow={false}>
+              <EngravedName name={name || "Nombre"} size={104} />
+            </Chapita>
+            <p className="text-[0.9375rem] text-ink-2">Así queda grabada.</p>
+          </div>
+          <fieldset>
+            <legend className="sr-only">Color</legend>
+            <div className="grid grid-cols-4 gap-x-2 gap-y-4 sm:grid-cols-8">
+              {PET_THEMES.map((t) => (
+                <label key={t.id} className="group flex cursor-pointer flex-col items-center gap-1.5">
+                  <input
+                    type="radio"
+                    name="theme"
+                    value={t.id}
+                    defaultChecked={themeId === t.id}
+                    onChange={() => setThemeId(t.id)}
+                    className="peer sr-only"
+                  />
+                  <span
+                    className="h-12 w-12 rounded-full shadow-[inset_0_-3px_0_rgb(0_0_0/.2),inset_0_2px_0_rgb(255_255_255/.2)] ring-1 ring-black/10 dark:ring-white/20 ring-offset-2 ring-offset-[var(--surface)] transition-transform duration-150 group-hover:scale-105 peer-checked:ring-[3px] peer-checked:ring-ink peer-focus-visible:ring-[3px] peer-focus-visible:ring-[var(--focus)]"
+                    style={{ background: t.color }}
+                  />
+                  <span className="text-sm font-medium text-ink-2 peer-checked:font-bold peer-checked:text-ink">{t.label}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        </Section>
+
+        <Section title="Fotos" description="Una foto clara de la cara ayuda a reconocerla. Se achican solas y se les borra la ubicación GPS.">
+          <div className="grid gap-5 sm:grid-cols-[auto_1fr] sm:items-start">
+            {defaults.photoUrl && (
+              <div className="w-28">
+                {/* eslint-disable-next-line @next/next/no-img-element -- foto subida por el dueño */}
+                <img src={defaults.photoUrl} alt="Portada actual" className="aspect-square w-28 rounded-2xl object-cover" />
+                <CheckField name="removePhoto" label="Sacar" />
+              </div>
+            )}
+            <Field
+              label={defaults.photoUrl ? "Cambiar foto de portada" : "Foto de portada"}
+              name="photo"
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/heic"
+              hint="JPG, PNG o WEBP, hasta 10 MB."
+            />
+          </div>
+
+          {existingPhotos.length > 0 && (
+            <fieldset>
+              <legend className="label">Galería</legend>
+              <div className="flex flex-wrap gap-3">
+                {existingPhotos.map((photo, i) => (
+                  <label key={photo.id} className="relative block h-24 w-24 cursor-pointer overflow-hidden rounded-2xl">
+                    <input type="checkbox" name="deletePhotoIds" value={photo.id} className="peer sr-only" />
+                    {/* eslint-disable-next-line @next/next/no-img-element -- foto subida por el dueño */}
+                    <img src={photo.url} alt={`Foto ${i + 1} de la galería`} className="h-full w-full object-cover transition-opacity peer-checked:opacity-40" />
+                    <span className="absolute inset-x-1 bottom-1 rounded-lg bg-surface/90 py-1 text-center text-xs font-bold text-ink peer-checked:hidden peer-focus-visible:outline peer-focus-visible:outline-3 peer-focus-visible:outline-[var(--focus)]">
+                      Quitar
+                    </span>
+                    <span className="absolute inset-x-1 bottom-1 hidden rounded-lg bg-danger py-1 text-center text-xs font-bold text-white peer-checked:block">
+                      Se borra
+                    </span>
+                  </label>
+                ))}
+              </div>
+              <p className="hint mt-2">Tocá una foto para marcarla; se borra al guardar.</p>
+            </fieldset>
+          )}
+
+          {gallerySlotsLeft > 0 && (
+            <Field
+              label={`Más fotos para la galería (hasta ${gallerySlotsLeft})`}
               name="galleryPhotos"
               type="file"
               multiple
-              accept="image/jpeg,image/png,image/webp"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 file:mr-3 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-1.5 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:file:bg-slate-700 dark:file:text-slate-200"
+              accept="image/jpeg,image/png,image/webp,image/heic"
             />
+          )}
+        </Section>
+
+        <Section title="Cómo es">
+          <TextArea
+            label="Personalidad"
+            name="personality"
+            maxLength={280}
+            placeholder="Ej: Juguetona, le encanta la pelota. Se asusta con los truenos."
+            defaultValue={v("personality", defaults.personality) as string}
+          />
+          <fieldset>
+            <legend className="label">
+              Para quien la encuentre <span className="font-normal text-ink-3">(opcional)</span>
+            </legend>
+            <div className="flex flex-wrap gap-2">
+              {PET_BADGES.map((badge) => (
+                <label key={badge.key} className="cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="badges"
+                    value={badge.key}
+                    defaultChecked={selectedBadges.has(badge.key)}
+                    className="peer sr-only"
+                  />
+                  <span className="inline-flex min-h-11 items-center rounded-full border-[1.5px] border-line-strong bg-surface px-4 text-[0.9375rem] font-semibold text-ink-2 transition-colors peer-checked:border-ink peer-checked:bg-ink peer-checked:text-ground peer-focus-visible:outline peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--focus)]">
+                    {badge.label}
+                  </span>
+                </label>
+              ))}
+            </div>
+            <p className="hint mt-2">Medicación, reactividad y necesidades especiales se destacan arriba en el perfil.</p>
+          </fieldset>
+        </Section>
+
+        <Section title="Salud" description="Útil si la lleva un vecino o una veterinaria.">
+          <TextArea
+            label="Alergias, medicación u otra información"
+            name="medicalNotes"
+            maxLength={500}
+            placeholder="Ej: Alérgica a la penicilina. Toma media pastilla de fenobarbital a la noche."
+            defaultValue={v("medicalNotes", defaults.medicalNotes) as string}
+          />
+          <div className="grid gap-5 sm:grid-cols-2">
+            <Field label="Veterinaria o veterinario" name="vetName" maxLength={60} placeholder="Ej: Dra. Pérez" defaultValue={v("vetName", defaults.vetName)} />
+            <Field label="Teléfono de la veterinaria" name="vetPhone" type="tel" defaultValue={v("vetPhone", defaults.vetPhone)} />
+            <Field label="Número de microchip" name="microchipNumber" maxLength={30} defaultValue={v("microchipNumber", defaults.microchipNumber)} />
+            <Field label="Seguro o cobertura" name="insuranceInfo" maxLength={120} defaultValue={v("insuranceInfo", defaults.insuranceInfo)} />
           </div>
-        )}
-      </Section>
+        </Section>
 
-      <Section
-        title="Información médica y veterinario (opcional)"
-        emoji="🩺"
-        delay={showTagCodeField ? 0.24 : 0.16}
-      >
-        <Field
-          label="Número de microchip"
-          name="microchipNumber"
-          defaultValue={defaults?.microchipNumber}
-        />
-        <TextArea
-          label="Alergias, medicación u otra información relevante"
-          name="medicalNotes"
-          defaultValue={defaults?.medicalNotes}
-        />
-        <div className="grid grid-cols-2 gap-4">
+        <Section title="Contacto" description="Es lo que va a usar quien la encuentre para avisarte.">
+          <div className="grid gap-5 sm:grid-cols-2">
+            <Field label="Nombre" name="contactName" required maxLength={60} autoComplete="name" defaultValue={v("contactName", defaults.contactName)} />
+            <Field
+              label="Teléfono"
+              name="contactPhone"
+              type="tel"
+              required
+              autoComplete="tel"
+              placeholder="11 2345-6789"
+              defaultValue={v("contactPhone", defaults.contactPhone)}
+            />
+            <Field
+              label="WhatsApp"
+              name="contactWhatsapp"
+              type="tel"
+              placeholder="11 2345-6789"
+              hint="Con código de área. Suele ser lo más rápido."
+              defaultValue={v("contactWhatsapp", defaults.contactWhatsapp)}
+            />
+            <div className="hidden sm:block" />
+            <Field label="Contacto alternativo" name="contactName2" maxLength={60} placeholder="Ej: Vecina, Marta" defaultValue={v("contactName2", defaults.contactName2)} />
+            <Field label="Teléfono alternativo" name="contactPhone2" type="tel" defaultValue={v("contactPhone2", defaults.contactPhone2)} />
+          </div>
           <Field
-            label="Veterinario/a"
-            name="vetName"
-            placeholder="Ej: Dra. Pérez"
-            defaultValue={defaults?.vetName}
+            label="Instagram"
+            name="contactInstagram"
+            maxLength={80}
+            autoComplete="off"
+            autoCapitalize="none"
+            spellCheck={false}
+            placeholder="@usuario"
+            hint="Tu usuario o el link a tu perfil. Quien la encuentre puede escribirte por ahí."
+            defaultValue={v("contactInstagram", defaults.contactInstagram ? `@${defaults.contactInstagram}` : undefined)}
           />
           <Field
-            label="Teléfono del veterinario"
-            name="vetPhone"
-            type="tel"
-            defaultValue={defaults?.vetPhone}
+            label="Recompensa"
+            name="rewardOffered"
+            maxLength={120}
+            placeholder="Ej: Se ofrece recompensa"
+            defaultValue={v("rewardOffered", defaults.rewardOffered)}
           />
-        </div>
-        <Field
-          label="Seguro / cobertura (opcional)"
-          name="insuranceInfo"
-          placeholder="Ej: OMINT Mascotas, póliza #1234"
-          defaultValue={defaults?.insuranceInfo}
-        />
-      </Section>
+        </Section>
 
-      <Section
-        title="Contacto que verá quien la encuentre"
-        emoji="📞"
-        delay={showTagCodeField ? 0.32 : 0.24}
-      >
-        <Field
-          label="Nombre del contacto"
-          name="contactName"
-          required
-          defaultValue={defaults?.contactName}
-        />
-        <div className="grid grid-cols-2 gap-4">
-          <Field
-            label="Teléfono"
-            name="contactPhone"
-            type="tel"
-            required
-            defaultValue={defaults?.contactPhone}
-          />
-          <Field
-            label="WhatsApp (opcional)"
-            name="contactWhatsapp"
-            type="tel"
-            defaultValue={defaults?.contactWhatsapp}
-          />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <Field
-            label="Nombre del contacto alternativo (opcional)"
-            name="contactName2"
-            defaultValue={defaults?.contactName2}
-          />
-          <Field
-            label="Teléfono alternativo (opcional)"
-            name="contactPhone2"
-            type="tel"
-            defaultValue={defaults?.contactPhone2}
-          />
-        </div>
-        <Field
-          label="Recompensa (opcional)"
-          name="rewardOffered"
-          placeholder="Ej: Se ofrece recompensa"
-          defaultValue={defaults?.rewardOffered}
-        />
-      </Section>
-
-      <Section title="Ubicación (opcional)" emoji="📍" delay={showTagCodeField ? 0.4 : 0.32}>
-        <Field label="Ciudad / barrio" name="city" defaultValue={defaults?.city} />
-        <Field
-          label="Dirección"
-          name="address"
-          defaultValue={defaults?.address}
-        />
-        <label className="flex items-center gap-2 text-sm dark:text-slate-300">
-          <input
-            type="checkbox"
+        <Section title="Zona">
+          <div className="grid gap-5 sm:grid-cols-2">
+            <Field label="Barrio o ciudad" name="city" maxLength={80} placeholder="Ej: Villa Crespo, CABA" defaultValue={v("city", defaults.city)} />
+            <Field label="Dirección" name="address" maxLength={120} defaultValue={v("address", defaults.address)} />
+          </div>
+          <CheckField
             name="showExactAddress"
-            defaultChecked={defaults?.showExactAddress}
-            className="h-4 w-4 rounded border-slate-300 text-indigo-600 dark:border-slate-600 dark:bg-slate-800"
+            label="Mostrar la dirección exacta en el perfil"
+            hint="Si no, solo se ve el barrio o ciudad."
+            defaultChecked={checked("showExactAddress", defaults.showExactAddress)}
           />
-          Mostrar la dirección exacta en el perfil público (si no, solo se
-          muestra la ciudad/barrio)
-        </label>
-      </Section>
+        </Section>
 
-      {state?.error && (
-        <p className="anim-fade-in rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
-          {state.error}
-        </p>
-      )}
+        <div className="space-y-4">
+          <FormMessage error={state.error} />
+          <SubmitButton className="btn btn-primary btn-lg w-full sm:w-auto sm:min-w-64" pendingLabel="Guardando…">
+            {submitLabel}
+          </SubmitButton>
+        </div>
+      </div>
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="press-scale hover-lift inline-flex w-full items-center justify-center gap-2 rounded-full bg-indigo-600 px-4 py-2.5 font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-60 sm:w-auto sm:px-8"
-      >
-        {pending && <Spinner />}
-        {pending ? "Guardando..." : submitLabel}
-      </button>
+      {/* Vista previa en vivo de la chapita. */}
+      <aside className="hidden lg:sticky lg:top-24 lg:col-span-4 lg:block" aria-hidden>
+        <div className="pegboard flex flex-col items-center rounded-[22px] border border-line px-6 pb-8 pt-6">
+          <span className="block h-6 w-2.5 rounded-b-md bg-[var(--metal)]" />
+          <Chapita theme={theme} size={220} className="-mt-2" key={themeId}>
+            <EngravedName name={name || "Nombre"} size={220} />
+            <span className="engraved mt-2 text-[0.72rem] font-bold uppercase tracking-[0.18em] opacity-90">Escaneame</span>
+          </Chapita>
+          <p className="mt-5 text-center text-[0.9375rem] font-semibold text-ink-2">{theme.label}</p>
+        </div>
+      </aside>
     </form>
   );
 }
 
-const selectClass =
-  "w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100";
-
 function Section({
   title,
-  emoji,
-  delay = 0,
+  description,
   children,
 }: {
   title: string;
-  emoji?: string;
-  /** Escalona el scroll-reveal entre secciones; se pasa explícitamente desde
-   * cada llamado (en vez de un contador compartido, que se desincroniza
-   * entre re-renders del formulario). */
-  delay?: number;
+  description?: string;
   children: React.ReactNode;
 }) {
   return (
-    <ScrollReveal delay={delay}>
-      <fieldset className="rounded-3xl border bg-white p-6 shadow-sm transition-colors dark:border-slate-800 dark:bg-slate-900">
-        <legend className="px-1 text-sm font-semibold text-slate-900 dark:text-white">
-          {emoji ? `${emoji} ` : ""}
-          {title}
-        </legend>
-        <div className="mt-3 space-y-4">{children}</div>
-      </fieldset>
-    </ScrollReveal>
-  );
-}
-
-function Field({
-  label,
-  name,
-  type = "text",
-  required = false,
-  defaultValue,
-  placeholder,
-  hideLabel = false,
-}: {
-  label: string;
-  name: string;
-  type?: string;
-  required?: boolean;
-  defaultValue?: string | number;
-  placeholder?: string;
-  hideLabel?: boolean;
-}) {
-  return (
-    <label className="block text-sm">
-      {!hideLabel && (
-        <span className="mb-1 block font-medium text-slate-700 dark:text-slate-300">
-          {label}
-        </span>
-      )}
-      <input
-        name={name}
-        type={type}
-        required={required}
-        defaultValue={defaultValue}
-        placeholder={placeholder}
-        accept={type === "file" ? "image/jpeg,image/png,image/webp" : undefined}
-        className="w-full rounded-lg border border-slate-300 px-3 py-2 file:mr-3 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-1.5 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:file:bg-slate-700 dark:file:text-slate-200 dark:placeholder:text-slate-500"
-      />
-    </label>
-  );
-}
-
-function TextArea({
-  label,
-  name,
-  defaultValue,
-  placeholder,
-}: {
-  label: string;
-  name: string;
-  defaultValue?: string;
-  placeholder?: string;
-}) {
-  return (
-    <label className="block text-sm">
-      <span className="mb-1 block font-medium text-slate-700 dark:text-slate-300">
-        {label}
-      </span>
-      <textarea
-        name={name}
-        defaultValue={defaultValue}
-        placeholder={placeholder}
-        rows={3}
-        className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500"
-      />
-    </label>
+    <section className="plate p-5 sm:p-7">
+      <h2 className="font-semiwide text-xl font-bold tracking-tight">{title}</h2>
+      {description && <p className="mt-1 text-[0.9375rem] text-ink-2">{description}</p>}
+      <div className="mt-5 space-y-5">{children}</div>
+    </section>
   );
 }

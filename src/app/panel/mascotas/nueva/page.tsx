@@ -1,32 +1,45 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { requireOwnerSession } from "@/lib/auth";
-import { redirect } from "next/navigation";
+import { findUserById } from "@/lib/repo/users";
 import { PetForm } from "@/components/PetForm";
 import { createPetAction } from "./actions";
 
-export default async function NuevaMascotaPage() {
+export const metadata: Metadata = { title: "Activar chapita" };
+
+export default async function NuevaMascotaPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ codigo?: string }>;
+}) {
   const session = await requireOwnerSession();
-  if (!session) redirect("/ingresar");
+  const user = session ? findUserById(session.sub) : undefined;
+  const { codigo } = await searchParams;
 
   return (
-    <div className="relative mx-auto max-w-2xl">
-      <div
-        aria-hidden
-        className="deco-blob -right-16 -top-20 h-48 w-48 bg-gradient-to-br from-fuchsia-200 to-amber-200 opacity-30 dark:from-fuchsia-900 dark:to-amber-900 dark:opacity-15"
-        style={{ animation: "float-a 9s ease-in-out infinite" }}
-      />
-      <div className="anim-load-1">
-        <h1 className="font-heading text-2xl font-bold dark:text-white">
-          Registrar mascota
-        </h1>
-        <p className="mt-1 text-slate-600 dark:text-slate-400">
-          Necesitás el código de una tarjeta NFC ya comprada para activarla.
-        </p>
-      </div>
-      <div className="anim-load-2 relative mt-6">
+    <div>
+      <Link href="/panel" className="inline-flex min-h-11 items-center gap-1.5 font-semibold text-ink-2 no-underline hover:text-ink">
+        <ArrowLeft size={18} aria-hidden />
+        Mis mascotas
+      </Link>
+      <h1 className="font-wide mt-2 text-[2rem] font-extrabold leading-none tracking-tight sm:text-[2.5rem]">
+        Activar chapita
+      </h1>
+      <p className="mt-3 max-w-2xl text-[1.0625rem] text-ink-2">
+        Solo el nombre y un teléfono son obligatorios. Todo lo demás lo podés completar ahora o después.
+      </p>
+      <div className="mt-8">
         <PetForm
           action={createPetAction}
           showTagCodeField
-          submitLabel="Registrar mascota"
+          tagCode={codigo}
+          defaults={{
+            contactName: user?.name,
+            contactPhone: user?.phone,
+            contactWhatsapp: user?.whatsapp ?? user?.phone,
+          }}
+          submitLabel="Activar chapita"
         />
       </div>
     </div>
