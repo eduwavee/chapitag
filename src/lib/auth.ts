@@ -1,6 +1,8 @@
 import { SignJWT, jwtVerify } from "jose";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
+import { findUserById } from "@/lib/repo/users";
+import { findAdminById } from "@/lib/repo/admins";
 
 const COOKIE_NAME = "chapitag_session";
 const SESSION_DURATION_SECONDS = 60 * 60 * 24 * 30; // 30 días
@@ -21,7 +23,11 @@ export interface SessionPayload {
   sub: string; // id del usuario o admin
   role: Role;
   name: string;
+  /** session_version del usuario al emitir el token; si cambió, la sesión ya no vale. */
+  ver: number;
 }
+
+export const MIN_PASSWORD_LENGTH = 8;
 
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, 10);
@@ -37,7 +43,7 @@ export async function verifyPassword(
 export async function createSessionToken(
   payload: SessionPayload
 ): Promise<string> {
-  return new SignJWT({ role: payload.role, name: payload.name })
+  return new SignJWT({ role: payload.role, name: payload.name, ver: payload.ver })
     .setProtectedHeader({ alg: "HS256" })
     .setSubject(payload.sub)
     .setIssuedAt()
@@ -55,6 +61,7 @@ export async function verifySessionToken(
       sub: payload.sub as string,
       role: payload.role as Role,
       name: (payload.name as string) ?? "",
+      ver: typeof payload.ver === "number" ? payload.ver : 0,
     };
   } catch {
     return null;
@@ -79,7 +86,7 @@ export async function clearSessionCookie() {
   cookieStore.delete(COOKIE_NAME);
 }
 
-/** Lee y valida la sesión actual desde las cookies (Server Components y Route Handlers). */
+/** Lee y valida la firma de la sesión actual (sin consultar la base). */
 export async function getSession(): Promise<SessionPayload | null> {
   const cookieStore = await cookies();
   const token = cookieStore.get(COOKIE_NAME)?.value;
@@ -87,14 +94,34 @@ export async function getSession(): Promise<SessionPayload | null> {
   return verifySessionToken(token);
 }
 
+/**
+ * Sesión de dueño vigente: firma válida, el usuario sigue existiendo y no
+ * cambió su contraseña desde que se emitió el token.
+ */
 export async function requireOwnerSession(): Promise<SessionPayload | null> {
   const session = await getSession();
   if (!session || session.role !== "OWNER") return null;
-  return session;
+  const user = findUserById(session.sub);
+  if (!user || user.session_version !== session.ver) return null;
+  return { ...session, name: user.name };
 }
 
 export async function requireAdminSession(): Promise<SessionPayload | null> {
   const session = await getSession();
   if (!session || session.role !== "ADMIN") return null;
-  return session;
+  const admin = findAdminById(session.sub);
+  if (!admin || admin.session_version !== session.ver) return null;
+  return { ...session, name: admin.name };
+}
+
+/**
+ * Destino seguro para redirigir después de ingresar: solo rutas internas
+ * ("/panel/..."), nunca URLs absolutas ni "//otro-sitio.com".
+ */
+export function safeNextPath(raw: unknown, fallback = "/panel"): string {
+  if (typeof raw !== "string") return fallback;
+  if (!raw.startsWith("/") || raw.startsWith("//") || raw.startsWith("/\\")) {
+    return fallback;
+  }
+  return raw;
 }

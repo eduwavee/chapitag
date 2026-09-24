@@ -2,30 +2,31 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { requireAdminSession } from "@/lib/auth";
+import { hashPassword, MIN_PASSWORD_LENGTH, requireAdminSession, setSessionCookie, verifyPassword } from "@/lib/auth";
 import { generateTagBatch, revokeTag } from "@/lib/repo/tags";
+import { findAdminById, updateAdminPassword } from "@/lib/repo/admins";
+
+export type BatchState = { error?: string; success?: string; label?: string };
 
 export async function generateBatchAction(
-  _prevState: { error?: string; success?: string } | undefined,
+  _prevState: BatchState | undefined,
   formData: FormData
-): Promise<{ error?: string; success?: string }> {
+): Promise<BatchState> {
   const session = await requireAdminSession();
   if (!session) redirect("/admin/ingresar");
 
-  const countRaw = String(formData.get("count") || "");
-  const count = parseInt(countRaw, 10);
-  const batchLabel = String(formData.get("batchLabel") || "").trim();
+  const count = parseInt(String(formData.get("count") || ""), 10);
+  const batchLabel = String(formData.get("batchLabel") || "").trim().slice(0, 60);
 
   if (!count || count < 1 || count > 500) {
-    return { error: "Ingresá una cantidad entre 1 y 500." };
+    return { error: "La cantidad tiene que estar entre 1 y 500." };
   }
 
-  const created = generateTagBatch(count, batchLabel);
+  const { label, tags } = generateTagBatch(count, batchLabel);
   revalidatePath("/admin");
   return {
-    success: `Se generaron ${created.length} tarjetas nuevas${
-      batchLabel ? ` (lote "${batchLabel}")` : ""
-    }.`,
+    success: `Listo: ${tags.length} chapitas nuevas en “${label}”.`,
+    label,
   };
 }
 
@@ -36,4 +37,26 @@ export async function revokeTagAction(formData: FormData): Promise<void> {
   const code = String(formData.get("code") || "").trim();
   if (code) revokeTag(code);
   revalidatePath("/admin");
+}
+
+export async function changeAdminPasswordAction(
+  _prev: { error?: string; success?: string } | undefined,
+  formData: FormData
+): Promise<{ error?: string; success?: string }> {
+  const session = await requireAdminSession();
+  if (!session) redirect("/admin/ingresar");
+  const admin = findAdminById(session.sub);
+  if (!admin) redirect("/admin/ingresar");
+
+  const current = String(formData.get("currentPassword") || "");
+  const next = String(formData.get("newPassword") || "");
+  if (!(await verifyPassword(current, admin.password_hash))) {
+    return { error: "La contraseña actual no coincide." };
+  }
+  if (next.length < MIN_PASSWORD_LENGTH) {
+    return { error: `La contraseña nueva tiene que tener al menos ${MIN_PASSWORD_LENGTH} caracteres.` };
+  }
+  const updated = updateAdminPassword(admin.id, await hashPassword(next));
+  await setSessionCookie({ sub: updated.id, role: "ADMIN", name: updated.name, ver: updated.session_version });
+  return { success: "Contraseña cambiada." };
 }
