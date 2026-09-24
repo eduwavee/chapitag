@@ -1,139 +1,180 @@
-# ChapiTag NFC
+# ChapiTag · La chapita NFC que trae a tu mascota de vuelta
 
-App web para chapitas/tarjetas NFC de mascotas perdidas. Cuando alguien
-encuentra a la mascota, acerca el celular a la tarjeta (sin instalar nada) y
-se abre un perfil público con el nombre de la mascota, datos médicos y los
-contactos del dueño para avisarle al instante.
+App web para chapitas NFC de mascotas, pensada para vender en Argentina. Cuando alguien encuentra a una mascota perdida, acerca el celular a la chapita (sin instalar nada) y se abre su perfil: foto, nombre, cuidados importantes y cómo avisarle a la familia por llamada, WhatsApp o Instagram, o mandándole su ubicación. El dueño se entera por email en el momento en que escanean la chapita.
 
-Incluye:
+El diseño sale de las chapitas de aluminio anodizado que se graban en el momento en veterinarias y cerrajerías: el color de cada chapita es la identidad de la mascota, el texto está "grabado" en metal y todo cuelga de un exhibidor perforado.
 
-- **Perfil público** (`/p/[codigo]`): lo que se abre al escanear la tarjeta.
-  Es totalmente personalizable: tema de color/plantilla visual, galería de
-  varias fotos, insignias de estado (vacunado, sociable, necesidades
-  especiales, etc.), datos de veterinario y seguro, personalidad de la
-  mascota y un contacto de emergencia alternativo.
-- **Cuenta de dueños**: registro/login, alta de mascotas asociando el código
-  de una tarjeta ya comprada, edición de datos y foto.
-- **Panel de administración**: generar lotes de códigos únicos para tarjetas
-  nuevas, ver el estado de cada una (sin usar / asignada / dada de baja) y
-  dar de baja tarjetas perdidas o robadas.
+<p align="center">
+  <img src="docs/celular-inicio.jpg" width="200" alt="Inicio en el celular: exhibidor con chapitas, una grabada con el nombre Luna, titular y botón Activar mi chapita">
+  <img src="docs/celular-perfil.jpg" width="200" alt="Perfil público de Firulais: foto, nombre grabado, cuidados y barra fija con Llamar y WhatsApp">
+  <img src="docs/celular-perdido.jpg" width="200" alt="El mismo perfil en modo perdido: franja naranja Me están buscando y botón Enviar mi ubicación">
+  <img src="docs/celular-panel.jpg" width="200" alt="Panel del dueño: estado de la mascota, botón para activar el modo perdido y escaneos">
+</p>
 
-## Cómo funciona el NFC (importante)
+<p align="center">
+  <img src="docs/escritorio-inicio.jpg" width="620" alt="Inicio en la compu: titular a la izquierda y exhibidor con chapitas, collar, perro y gato a la derecha">
+  <img src="docs/afiche-se-busca.jpg" width="200" alt="Afiche Se busca imprimible con foto, teléfono, QR y tiras para arrancar"><br>
+  <sub>Inicio en la compu y afiche "Se busca" que se imprime desde el panel (datos de ejemplo).</sub>
+</p>
 
-Una tarjeta NFC para este uso **no necesita programación especial ni una app
-propia**: simplemente se graba en el chip la URL pública de la mascota (por
-ejemplo `https://tudominio.com/p/K7M2P9XQ`). Cualquier celular moderno, al
-acercarlo a la tarjeta, abre esa URL en el navegador automáticamente.
+---
 
-Flujo sugerido para operar el negocio:
+## Qué hace
 
-1. Comprás tarjetas/chapitas NFC en blanco (chips NTAG213/215, muy baratos,
-   se consiguen en Mercado Libre/AliExpress como stickers o tarjetas PVC).
-2. Desde **Admin → Generar tarjetas** generás un lote de códigos únicos.
-3. Con una app gratuita como **NFC Tools** (Android/iOS) grabás en cada
-   tarjeta la URL `https://tudominio.com/p/<CODIGO>` (una por una, o en serie
-   si tenés un grabador NFC de escritorio).
-4. Le vendés/entregás la tarjeta ya grabada al dueño de la mascota, quien
-   entra a su cuenta y la activa cargando el mismo código en
-   **Registrar mascota**.
+**Para quien encuentra a la mascota**
 
-## Requisitos
+| | |
+|---|---|
+| **Perfil público** | Lo que abre la chapita (`/p/CÓDIGO`). La foto y el nombre mandan; llamar y WhatsApp quedan siempre abajo, al alcance del pulgar. Los cuidados importantes (medicación, reactivo con otros animales, necesidades especiales) aparecen primero. Siempre en modo claro, para leerse al sol. |
+| **Enviar mi ubicación** | Con un botón comparte su ubicación GPS (y un mensaje, por ejemplo "la tengo en la esquina del kiosco"). Le llega al dueño por email con el link al mapa y queda en su panel. Después ofrece mandarla también por WhatsApp. |
+| **Instagram** | Si el dueño cargó su usuario, aparece un botón para escribirle por Instagram. |
+| **Sin app ni registro** | Funciona en el navegador de cualquier celular con NFC. Para los que no tienen NFC, la app genera un QR de respaldo para imprimir en la chapita o en el afiche. |
 
-- Node.js **22.5 o superior** (usa el módulo nativo `node:sqlite`, no hace
-  falta instalar ninguna base de datos aparte).
+**Para el dueño**
 
-## Puesta en marcha (desarrollo)
+| | |
+|---|---|
+| **Activar la chapita** | Con el código del dorso, o escaneando una chapita que todavía no está activada (el perfil vacío ofrece "Activar esta chapita"). |
+| **Perfil personalizable** | Fotos (portada y galería), color de la chapita (8 anodizados), personalidad, insignias, salud, veterinaria, seguro, contacto alternativo, Instagram, recompensa y zona. Mientras lo editás ves la chapita grabada con el nombre y el color elegidos. |
+| **Modo perdido** | Un botón y el perfil pasa a "Me están buscando", con tu mensaje y la recompensa arriba. Te avisamos por email en cada escaneo. |
+| **Escaneos** | Historial de cada vez que se abrió el perfil y de las ubicaciones compartidas, con link al mapa. Los avisos por email se pueden apagar. |
+| **Afiche "Se busca"** | A4 listo para imprimir (también en blanco y negro): foto, datos para reconocerla, teléfono, QR al perfil y tiras con el número para arrancar. |
+| **Vista previa al compartir** | Al mandar el link por WhatsApp o redes se ve una tarjeta con la foto y el nombre; en modo perdido, con la franja "SE BUSCA". |
+| **Reemplazar la chapita** | Si se pierde o se rompe, cargás el código de una nueva: la vieja queda dada de baja y no muestra tus datos. |
+| **Cuenta** | Registro, ingreso, recuperar la contraseña por email y cambiar datos o contraseña (cierra las sesiones de los otros dispositivos). |
 
-```bash
-npm install
-cp .env.example .env
-# Editá .env y poné un JWT_SECRET propio (una cadena larga al azar).
-# Podés generar uno con: openssl rand -hex 32
+**Para el operador (admin)**
 
-npm run seed   # crea el usuario administrador y una mascota de ejemplo
-npm run dev
-```
+| | |
+|---|---|
+| **Lotes** | Genera lotes de códigos únicos (8 caracteres sin los que se confunden: sin 0/O ni 1/I/L). Cada lote se ve como una fila de chapitas: activadas, sin usar y dadas de baja. |
+| **Imprenta y grabado** | Exporta un lote a CSV con la URL a grabar en cada chip e imprime una hoja A4 de QR (5×7) con el código debajo. |
+| **Búsqueda y bajas** | Busca por código, mascota o email; filtra por estado o lote; da de baja chapitas perdidas o robadas (con confirmación). |
 
-Abrí http://localhost:3000
+**Privacidad y seguridad**
 
-Credenciales que crea `npm run seed` (cambiala apenas entres):
+- Los perfiles no aparecen en buscadores (`noindex`) y la dirección exacta solo se muestra si el dueño la activa.
+- Las fotos se achican, pasan a WebP y se les borran los datos EXIF, incluida la ubicación GPS de donde se sacaron.
+- Límite de intentos en el ingreso, la recuperación de contraseña y el envío de ubicaciones.
+- El escaneo se registra desde el navegador: no cuentan los bots que arman la vista previa de un link ni el dueño mirando su propio perfil.
 
-- **Admin**: `admin@chapitag.demo` / `Admin1234!` → http://localhost:3000/admin/ingresar
-- **Dueño de ejemplo**: `demo@chapitag.demo` / `Demo1234!`
-- **Perfil de ejemplo**: http://localhost:3000/p/demo
+## Cómo funciona el NFC
 
-## Estructura del proyecto
+La chapita no necesita programación especial ni una app propia: en el chip (NTAG213/215) se graba la URL pública de la mascota, por ejemplo `https://tudominio.com.ar/p/K7M2P9XQ`. Cualquier celular moderno abre esa URL al acercarlo.
+
+1. Comprás chapitas NFC en blanco (se consiguen como stickers, tarjetas PVC o chapitas).
+2. Desde **Admin → Generar un lote** generás los códigos y exportás el CSV.
+3. Con **NFC Tools** (Android/iOS) o un grabador de escritorio grabás en cada chip la URL de la columna `url_nfc`, e imprimís el código en el dorso (o la hoja de QR).
+4. El dueño activa la chapita con ese código desde su cuenta.
+
+## Estructura
 
 ```
 src/
   app/
-    page.tsx                 → landing page
-    registro/, ingresar/      → alta e ingreso de dueños
-    panel/                    → panel del dueño (protegido)
-      mascotas/nueva/         → alta de mascota + código de tarjeta
-      mascotas/[id]/          → edición de mascota
-    p/[code]/                 → perfil público (lo que abre la tarjeta NFC)
-    admin/                    → panel de administración (protegido)
-      ingresar/                → login de admin (único endpoint público bajo /admin)
-      (dashboard)/             → generación y listado de tarjetas
-    api/uploads/[filename]/   → sirve las fotos subidas por los dueños
+    page.tsx, LandingHero.tsx   inicio (la chapita que se graba en vivo) y ProfileDemo.tsx
+    p/[code]/                   ⭐ perfil público + imagen para compartir (opengraph-image.tsx)
+    activar/                    activar una chapita por código
+    registro/, ingresar/,
+    recuperar/                  cuenta del dueño
+    panel/                      panel del dueño (protegido; ver src/proxy.ts)
+      mascotas/nueva/           activar chapita + alta de la mascota
+      mascotas/[id]/            ficha: modo perdido, escaneos, QR, reemplazar, borrar
+      mascotas/[id]/editar/     edición del perfil
+      mascotas/[id]/afiche/     afiche "Se busca"
+      cuenta/                   datos y contraseña
+    admin/                      panel del operador: lotes, búsqueda, hoja de QR, CSV, cuenta
+    api/p/[code]/scan|location  registro de escaneos y ubicación compartida
+    api/qr/[code]/              QR en SVG
+    api/uploads/[filename]/     fotos subidas
+    globals.css                 ⭐ sistema visual: colores, anodizados, grabado, botones, animaciones
+  components/
+    Chapita.tsx                 la chapita dibujada (disco, hueso o gato; aro, grabado, dorso NFC)
+    Animals.tsx                 perro, gato y collar
+    profile/                    perfil público (compartido con la demo del inicio)
+    PetForm.tsx, form.tsx       formularios
   lib/
-    db.ts                     → conexión a SQLite (node:sqlite)
-    schema.sql                → esquema de la base de datos
-    auth.ts                   → sesiones (JWT en cookie httpOnly) y hashing
-    repo/                     → funciones de acceso a datos (users, pets, tags, admins)
-    upload.ts                 → guardado de fotos subidas
-scripts/seed.mjs              → siembra inicial (admin + mascota de ejemplo)
+    db.ts, schema.sql           SQLite (node:sqlite) y migraciones automáticas
+    auth.ts                     sesiones JWT en cookie httpOnly
+    repo/                       acceso a datos (users, pets, tags, scans, admins)
+    email.ts, notify.ts         emails con Resend y avisos de escaneo
+    upload.ts                   fotos: validación, WebP 1600px y sin GPS (sharp)
+    themes.ts                   los 8 colores anodizados de las chapitas
+scripts/seed.mjs                datos iniciales: admin, mascota de ejemplo y lote de prueba
+public/demo/                    foto de la mascota de ejemplo
+docs/                           capturas para este README
+PRODUCT.md, DESIGN.md           producto y sistema de diseño
 ```
 
-## Base de datos
+Hecho con **Next.js 16** (App Router, Server Actions), **React 19**, **Tailwind CSS 4** y **SQLite** con el módulo nativo `node:sqlite`, sin base de datos aparte.
 
-Usa SQLite a través del módulo nativo `node:sqlite` de Node (sin
-dependencias binarias externas: nada que descargar ni compilar). El archivo
-vive en `data/app.db` (configurable con `DB_PATH` en `.env`). El esquema se
-aplica automáticamente al arrancar (`CREATE TABLE IF NOT EXISTS`), así que no
-hace falta correr migraciones.
+## Verlo en tu compu
 
-Para inspeccionar la base a mano podés usar la CLI `sqlite3` o cualquier
-cliente de SQLite apuntando a `data/app.db`.
+Necesitás **Node.js 22.5 o superior**.
 
-## Producción / despliegue
+```bash
+npm install
+cp .env.example .env     # poné un JWT_SECRET propio (openssl rand -hex 32)
+npm run seed             # admin, mascota de ejemplo y 12 chapitas de prueba
+npm run dev
+```
 
-Este proyecto guarda datos en disco (la base SQLite y las fotos subidas en
-`data/uploads/`), así que necesita un **servidor con disco persistente**:
-un VPS, Docker, Railway, Render, Fly.io, etc. — con `npm run build` seguido
-de `npm run start`.
+Después abrí <http://localhost:3000>.
 
-**No es apto tal cual para Vercel u otras plataformas serverless**, porque
-ahí el sistema de archivos es efímero entre invocaciones (perderías la base
-y las fotos). Para desplegar en serverless habría que:
+| Qué | Dónde | Acceso |
+|---|---|---|
+| Perfil de ejemplo | `/p/demo` | — |
+| Panel del dueño | `/ingresar` | `demo@chapitag.demo` / `Demo1234!` |
+| Panel del operador | `/admin/ingresar` | `admin@chapitag.demo` / `Admin1234!` |
+| Activar una chapita | `/activar` | un código del "Lote de prueba" (se ven en el admin) |
 
-- Cambiar `src/lib/db.ts` por una base de datos administrada (Postgres en
-  Neon/Supabase, Turso, etc.) — el resto del código (las funciones en
-  `src/lib/repo/*`) quedaría prácticamente igual, solo cambia cómo se abre
-  la conexión.
-- Cambiar `src/lib/upload.ts` y `src/app/api/uploads/[filename]/route.ts`
-  por un storage externo (Vercel Blob, S3, Cloudinary, etc.).
+Sin `RESEND_API_KEY`, los emails (avisos de escaneo, recuperar contraseña) no se envían: se imprimen en la consola del servidor.
 
-Antes de salir a producción:
+### Variables de entorno
 
-- [ ] Generá un `JWT_SECRET` nuevo y secreto (no uses el de ejemplo).
-- [ ] Corré `npm run seed` una sola vez y **cambiá la contraseña del admin**
-      de ejemplo (por ahora no hay pantalla para cambiarla — se puede
-      actualizar directo en la tabla `admin_users`, o simplemente creá un
-      admin nuevo a mano y borrá el de ejemplo).
-- [ ] Serví la app con HTTPS (necesario para que el navegador confíe en los
-      links `tel:`/`wa.me` sin advertencias y para la seguridad de las
-      cookies de sesión).
-- [ ] Hacé backup periódico de `data/app.db` y `data/uploads/`.
+| Variable | Para qué |
+|---|---|
+| `JWT_SECRET` | Firma de las sesiones. Una cadena larga y al azar. **Obligatoria.** |
+| `DB_PATH` | Dónde vive la base SQLite (por defecto `./data/app.db`). |
+| `APP_URL` | URL pública sin barra final, por ejemplo `https://tudominio.com.ar`. Es la que va en los chips, los QR, los emails y la vista previa. En desarrollo se puede dejar vacía. |
+| `RESEND_API_KEY` | API key de [Resend](https://resend.com) para mandar emails. |
+| `EMAIL_FROM` | Remitente con un dominio verificado en Resend, por ejemplo `ChapiTag <avisos@tudominio.com.ar>`. |
 
-## Ideas para seguir (no implementadas)
+## Antes de publicar ✅
 
-- Recuperación de contraseña / verificación de email.
-- Botón en el perfil público para que quien encontró a la mascota marque
-  "la vi acá" con ubicación aproximada.
-- Historial de tarjetas por mascota (reemplazo si se pierde la chapita).
-- Exportar un lote de tarjetas generadas como planilla/PDF con los códigos
-  en QR, listo para mandar a imprenta.
-- Notificación (email/WhatsApp) automática al dueño cuando se visita el
-  perfil de su mascota.
+1. **Secreto:** generá un `JWT_SECRET` nuevo (no uses el de ejemplo).
+2. **Dominio:** definí el dominio y cargalo en `APP_URL` *antes* de grabar chips: esa URL queda grabada en cada chapita.
+3. **Emails:** creá la cuenta en Resend, verificá el dominio y cargá `RESEND_API_KEY` y `EMAIL_FROM`.
+4. **Admin:** corré `npm run seed` una sola vez y cambiá la contraseña del operador desde **Admin → Cuenta**.
+5. **Canal de venta:** cuando esté definido (tienda propia, Mercado Libre, veterinarias), sumá el link de compra en el inicio (`src/app/LandingHero.tsx`).
+6. **HTTPS:** necesario para las cookies de sesión y para que el navegador comparta la ubicación.
+7. **Backups:** respaldá `data/app.db` y `data/uploads/` periódicamente.
+
+## Publicar
+
+La app guarda la base SQLite y las fotos en disco (`data/`), así que necesita un **servidor con disco persistente**: un VPS, Docker, Railway, Render o Fly.io.
+
+```bash
+npm ci
+npm run build
+npm run seed     # solo la primera vez
+npm run start    # puerto 3000; poné un proxy con HTTPS adelante (Nginx, Caddy)
+```
+
+No es apta tal cual para Vercel u otras plataformas serverless, porque ahí el disco se borra entre invocaciones. Para eso habría que pasar `src/lib/db.ts` a una base administrada (Postgres en Neon o Supabase, Turso) y `src/lib/upload.ts` + `src/app/api/uploads/` a un storage externo (Vercel Blob, S3, Cloudinary). El resto del código queda igual. Si corre en más de una instancia, el límite de intentos en memoria (`src/lib/rateLimit.ts`) tiene que pasar a Redis.
+
+## Próxima etapa
+
+- Link de compra en el inicio cuando esté definido el canal de venta.
+- Verificación del email al registrarse.
+- Carnet sanitario: vacunas con fecha y recordatorio por email.
+- Varias personas a cargo de la misma mascota (familia compartida).
+- Aviso por WhatsApp además del email (API de WhatsApp Business).
+
+## Créditos
+
+- Foto de la mascota de ejemplo: [Unsplash](https://unsplash.com/) (Unsplash License), en `public/demo/firulais.webp`.
+- Tipografía: [Archivo](https://fonts.google.com/specimen/Archivo), de Omnibus-Type (Buenos Aires) (SIL Open Font License).
+- Íconos: [Lucide](https://lucide.dev/) (ISC).
+- QR: [qrcode](https://github.com/soldair/node-qrcode) (MIT). Imágenes: [sharp](https://sharp.pixelplumbing.com/) (Apache 2.0).
+- Diseño y sistema visual documentados en [`DESIGN.md`](DESIGN.md); producto en [`PRODUCT.md`](PRODUCT.md).
