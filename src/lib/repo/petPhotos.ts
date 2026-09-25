@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { all, get, run } from "@/lib/db";
 import { newId } from "@/lib/ids";
 
 export interface PetPhotoRow {
@@ -11,43 +11,42 @@ export interface PetPhotoRow {
 
 export { MAX_GALLERY_PHOTOS } from "@/lib/limits";
 
-export function listPetPhotos(petId: string): PetPhotoRow[] {
-  return db
-    .prepare(
-      "SELECT * FROM pet_photos WHERE pet_id = ? ORDER BY position ASC, created_at ASC"
-    )
-    .all(petId) as unknown as PetPhotoRow[];
+export async function listPetPhotos(petId: string): Promise<PetPhotoRow[]> {
+  return all<PetPhotoRow>(
+    "SELECT * FROM pet_photos WHERE pet_id = ? ORDER BY position ASC, created_at ASC",
+    petId
+  );
 }
 
-export function countPetPhotos(petId: string): number {
-  const row = db
-    .prepare("SELECT COUNT(*) as c FROM pet_photos WHERE pet_id = ?")
-    .get(petId) as { c: number };
-  return row.c;
+export async function countPetPhotos(petId: string): Promise<number> {
+  const row = await get<{ c: number }>("SELECT COUNT(*) as c FROM pet_photos WHERE pet_id = ?", petId);
+  return row?.c ?? 0;
 }
 
-export function addPetPhoto(petId: string, url: string): PetPhotoRow {
+export async function addPetPhoto(petId: string, url: string): Promise<PetPhotoRow> {
   const id = newId();
-  const row = db
-    .prepare("SELECT COALESCE(MAX(position), -1) + 1 as p FROM pet_photos WHERE pet_id = ?")
-    .get(petId) as { p: number };
-  db.prepare(
-    "INSERT INTO pet_photos (id, pet_id, url, position) VALUES (?, ?, ?, ?)"
-  ).run(id, petId, url, row.p);
-  return db
-    .prepare("SELECT * FROM pet_photos WHERE id = ?")
-    .get(id) as unknown as PetPhotoRow;
+  await run(
+    `INSERT INTO pet_photos (id, pet_id, url, position)
+     VALUES (?, ?, ?, (SELECT COALESCE(MAX(position), -1) + 1 FROM pet_photos WHERE pet_id = ?))`,
+    id,
+    petId,
+    url,
+    petId
+  );
+  return (await get<PetPhotoRow>("SELECT * FROM pet_photos WHERE id = ?", id))!;
 }
 
 /**
  * Borra una foto de galería, verificando que pertenezca a la mascota
  * indicada. Devuelve la URL borrada (para eliminar el archivo) o null.
  */
-export function deletePetPhoto(photoId: string, petId: string): string | null {
-  const row = db
-    .prepare("SELECT url FROM pet_photos WHERE id = ? AND pet_id = ?")
-    .get(photoId, petId) as { url: string } | undefined;
+export async function deletePetPhoto(photoId: string, petId: string): Promise<string | null> {
+  const row = await get<{ url: string }>(
+    "SELECT url FROM pet_photos WHERE id = ? AND pet_id = ?",
+    photoId,
+    petId
+  );
   if (!row) return null;
-  db.prepare("DELETE FROM pet_photos WHERE id = ? AND pet_id = ?").run(photoId, petId);
+  await run("DELETE FROM pet_photos WHERE id = ? AND pet_id = ?", photoId, petId);
   return row.url;
 }

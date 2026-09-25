@@ -12,7 +12,7 @@ export default async function NuevaContrasenaPage({
   params: Promise<{ token: string }>;
 }) {
   const { token } = await params;
-  const user = findValidPasswordReset(token);
+  const user = await findValidPasswordReset(token);
 
   if (!user) {
     return (

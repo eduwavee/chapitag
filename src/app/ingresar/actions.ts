@@ -24,7 +24,7 @@ export async function loginAction(
   const limit = rateLimit(`login:${ip}:${email}`, 8, 15 * 60 * 1000);
   if (!limit.ok) return { error: tooManyAttemptsMessage(limit.retryAfterSeconds), values };
 
-  const user = findUserByEmail(email);
+  const user = await findUserByEmail(email);
   if (!user || !(await verifyPassword(password, user.password_hash))) {
     return { error: "El email o la contraseña no coinciden. Revisalos o recuperá tu contraseña.", values };
   }

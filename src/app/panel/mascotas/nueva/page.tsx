@@ -14,7 +14,7 @@ export default async function NuevaMascotaPage({
   searchParams: Promise<{ codigo?: string }>;
 }) {
   const session = await requireOwnerSession();
-  const user = session ? findUserById(session.sub) : undefined;
+  const user = session ? await findUserById(session.sub) : undefined;
   const { codigo } = await searchParams;
 
   return (

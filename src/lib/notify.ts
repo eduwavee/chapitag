@@ -37,13 +37,13 @@ export async function notifyOwnerOfScan(
   panelUrl: string
 ): Promise<void> {
   if (!pet.notify_scans) return;
-  const owner = findUserById(pet.owner_id);
+  const owner = await findUserById(pet.owner_id);
   if (!owner) return;
 
   if (scan.kind === "view") {
     const cooldown = pet.lost ? VIEW_EMAIL_COOLDOWN_LOST_MIN : VIEW_EMAIL_COOLDOWN_MIN;
     if (minutesSince(pet.last_scan_email_at) < cooldown) return;
-    markScanEmailSent(pet.id);
+    await markScanEmailSent(pet.id);
     await sendEmail({
       to: owner.email,
       subject: pet.lost
@@ -63,7 +63,7 @@ export async function notifyOwnerOfScan(
   }
 
   // Ubicación compartida: siempre se avisa.
-  markScanEmailSent(pet.id);
+  await markScanEmailSent(pet.id);
   const lines = [
     `Hola, ${owner.name}.`,
     `Alguien que encontró a ${pet.name} te compartió su ubicación (${scanTime(scan)}).`,

@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { all, get, run } from "@/lib/db";
 import { newId } from "@/lib/ids";
 
 export type ScanKind = "view" | "location";
@@ -15,7 +15,7 @@ export interface ScanRow {
   created_at: string;
 }
 
-export function recordScan(input: {
+export async function recordScan(input: {
   petId: string;
   tagCode: string;
   kind: ScanKind;
@@ -23,12 +23,11 @@ export function recordScan(input: {
   lng?: number;
   accuracy?: number;
   note?: string;
-}): ScanRow {
+}): Promise<ScanRow> {
   const id = newId();
-  db.prepare(
+  await run(
     `INSERT INTO scans (id, pet_id, tag_code, kind, lat, lng, accuracy, note)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
-  ).run(
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     id,
     input.petId,
     input.tagCode,
@@ -38,27 +37,28 @@ export function recordScan(input: {
     input.accuracy ?? null,
     input.note?.trim() || null
   );
-  return db.prepare("SELECT * FROM scans WHERE id = ?").get(id) as unknown as ScanRow;
+  return (await get<ScanRow>("SELECT * FROM scans WHERE id = ?", id))!;
 }
 
-export function listScansForPet(petId: string, limit = 20): ScanRow[] {
-  return db
-    .prepare("SELECT * FROM scans WHERE pet_id = ? ORDER BY created_at DESC LIMIT ?")
-    .all(petId, limit) as unknown as ScanRow[];
+export async function listScansForPet(petId: string, limit = 20): Promise<ScanRow[]> {
+  return all<ScanRow>(
+    "SELECT * FROM scans WHERE pet_id = ? ORDER BY created_at DESC LIMIT ?",
+    petId,
+    limit
+  );
 }
 
-export function countScansForPet(petId: string): number {
-  const row = db
-    .prepare("SELECT COUNT(*) as c FROM scans WHERE pet_id = ?")
-    .get(petId) as { c: number };
-  return row.c;
+export async function countScansForPet(petId: string): Promise<number> {
+  const row = await get<{ c: number }>("SELECT COUNT(*) as c FROM scans WHERE pet_id = ?", petId);
+  return row?.c ?? 0;
 }
 
-export function countScansSince(days: number): number {
-  const row = db
-    .prepare("SELECT COUNT(*) as c FROM scans WHERE created_at >= datetime('now', ?)")
-    .get(`-${days} days`) as { c: number };
-  return row.c;
+export async function countScansSince(days: number): Promise<number> {
+  const row = await get<{ c: number }>(
+    "SELECT COUNT(*) as c FROM scans WHERE created_at >= datetime('now', ?)",
+    `-${days} days`
+  );
+  return row?.c ?? 0;
 }
 
 export function mapsUrl(lat: number, lng: number): string {

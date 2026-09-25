@@ -1,4 +1,4 @@
-import { db, transaction } from "@/lib/db";
+import { all, get, run, transaction } from "@/lib/db";
 import { newId, newTagCode } from "@/lib/ids";
 
 export type TagStatus = "UNASSIGNED" | "ASSIGNED" | "REVOKED";
@@ -19,10 +19,8 @@ export function normalizeCode(code: string): string {
   return code.trim().toUpperCase().replace(/\s|-/g, "");
 }
 
-export function findTagByCode(code: string): TagRow | undefined {
-  return db
-    .prepare("SELECT * FROM tags WHERE code = ?")
-    .get(normalizeCode(code)) as TagRow | undefined;
+export async function findTagByCode(code: string): Promise<TagRow | undefined> {
+  return get<TagRow>("SELECT * FROM tags WHERE code = ?", normalizeCode(code));
 }
 
 /** Etiqueta automática para lotes generados sin nombre, así siempre se pueden exportar/imprimir. */
@@ -40,36 +38,38 @@ function defaultBatchLabel(): string {
 }
 
 /** Genera un lote de códigos únicos sin asignar, listos para grabar en tarjetas NFC. */
-export function generateTagBatch(
+export async function generateTagBatch(
   count: number,
   batchLabel?: string
-): { label: string; tags: TagRow[] } {
+): Promise<{ label: string; tags: TagRow[] }> {
   const label = batchLabel?.trim() || defaultBatchLabel();
-  const insert = db.prepare(
-    `INSERT INTO tags (id, code, status, batch_label) VALUES (?, ?, 'UNASSIGNED', ?)`
-  );
-  const tags = transaction(() => {
+  const tags = await transaction(async () => {
     const created: TagRow[] = [];
     for (let i = 0; i < count; i++) {
       // Reintenta si por casualidad el código ya existe (muy poco probable).
       let code = newTagCode();
       let attempts = 0;
-      while (findTagByCode(code) && attempts < 5) {
+      while ((await findTagByCode(code)) && attempts < 5) {
         code = newTagCode();
         attempts++;
       }
-      insert.run(newId(), code, label);
-      created.push(findTagByCode(code)!);
+      await run(
+        `INSERT INTO tags (id, code, status, batch_label) VALUES (?, ?, 'UNASSIGNED', ?)`,
+        newId(),
+        code,
+        label
+      );
+      created.push((await findTagByCode(code))!);
     }
     return created;
   });
   return { label, tags };
 }
 
-export function countTagsByStatus(): Record<TagStatus, number> {
-  const rows = db
-    .prepare("SELECT status, COUNT(*) as c FROM tags GROUP BY status")
-    .all() as { status: TagStatus; c: number }[];
+export async function countTagsByStatus(): Promise<Record<TagStatus, number>> {
+  const rows = await all<{ status: TagStatus; c: number }>(
+    "SELECT status, COUNT(*) as c FROM tags GROUP BY status"
+  );
   const result: Record<TagStatus, number> = {
     UNASSIGNED: 0,
     ASSIGNED: 0,
@@ -84,33 +84,30 @@ export function countTagsByStatus(): Record<TagStatus, number> {
  * estaba libre (la condición `status = 'UNASSIGNED'` va en el UPDATE para que
  * dos activaciones simultáneas no puedan ganar las dos).
  */
-export function assignTagToPet(code: string, petId: string): boolean {
-  const result = db
-    .prepare(
-      `UPDATE tags SET status = 'ASSIGNED', pet_id = ?, assigned_at = datetime('now')
-       WHERE code = ? AND status = 'UNASSIGNED'`
-    )
-    .run(petId, normalizeCode(code));
-  return Number(result.changes) === 1;
+export async function assignTagToPet(code: string, petId: string): Promise<boolean> {
+  const result = await run(
+    `UPDATE tags SET status = 'ASSIGNED', pet_id = ?, assigned_at = datetime('now')
+     WHERE code = ? AND status = 'UNASSIGNED'`,
+    petId,
+    normalizeCode(code)
+  );
+  return result.changes === 1;
 }
 
 /** Libera las tarjetas de una mascota (por ejemplo al borrar su perfil). */
-export function unassignTagsForPet(petId: string): void {
-  db.prepare(
-    `UPDATE tags SET status = 'UNASSIGNED', pet_id = NULL, assigned_at = NULL WHERE pet_id = ?`
-  ).run(petId);
+export async function unassignTagsForPet(petId: string): Promise<void> {
+  await run(
+    `UPDATE tags SET status = 'UNASSIGNED', pet_id = NULL, assigned_at = NULL WHERE pet_id = ?`,
+    petId
+  );
 }
 
-export function revokeTag(code: string): void {
-  db.prepare(
-    `UPDATE tags SET status = 'REVOKED', pet_id = NULL WHERE code = ?`
-  ).run(normalizeCode(code));
+export async function revokeTag(code: string): Promise<void> {
+  await run(`UPDATE tags SET status = 'REVOKED', pet_id = NULL WHERE code = ?`, normalizeCode(code));
 }
 
-export function findActiveTagForPet(petId: string): TagRow | undefined {
-  return db
-    .prepare("SELECT * FROM tags WHERE pet_id = ? AND status = 'ASSIGNED'")
-    .get(petId) as TagRow | undefined;
+export async function findActiveTagForPet(petId: string): Promise<TagRow | undefined> {
+  return get<TagRow>("SELECT * FROM tags WHERE pet_id = ? AND status = 'ASSIGNED'", petId);
 }
 
 export type ReplaceTagResult =
@@ -121,17 +118,18 @@ export type ReplaceTagResult =
  * Chapita perdida o rota: da de baja la tarjeta actual de la mascota (si
  * alguien la escanea, verá que fue dada de baja) y le asigna una nueva.
  */
-export function replaceTagForPet(petId: string, newCode: string): ReplaceTagResult {
+export async function replaceTagForPet(petId: string, newCode: string): Promise<ReplaceTagResult> {
   const code = normalizeCode(newCode);
-  const tag = findTagByCode(code);
+  const tag = await findTagByCode(code);
   if (!tag) return { ok: false, error: "TAG_NOT_FOUND" };
   if (tag.status !== "UNASSIGNED") return { ok: false, error: "TAG_NOT_AVAILABLE" };
 
-  return transaction(() => {
-    db.prepare(
-      `UPDATE tags SET status = 'REVOKED', pet_id = NULL WHERE pet_id = ? AND status = 'ASSIGNED'`
-    ).run(petId);
-    if (!assignTagToPet(code, petId)) {
+  return transaction(async () => {
+    await run(
+      `UPDATE tags SET status = 'REVOKED', pet_id = NULL WHERE pet_id = ? AND status = 'ASSIGNED'`,
+      petId
+    );
+    if (!(await assignTagToPet(code, petId))) {
       throw new Error("La tarjeta dejó de estar disponible.");
     }
     return { ok: true as const, code };
@@ -179,29 +177,31 @@ const TAG_DETAIL_FROM = `FROM tags
   LEFT JOIN users ON users.id = pets.owner_id`;
 
 /** Tarjetas para el panel de admin (con mascota y dueño si están asignadas), filtradas y paginadas. */
-export function listTagsDetailed(
+export async function listTagsDetailed(
   filter: TagFilter = {},
   limit = 50,
   offset = 0
-): TagDetailedRow[] {
+): Promise<TagDetailedRow[]> {
   const where = buildTagWhere(filter);
-  return db
-    .prepare(
-      `SELECT tags.*, pets.name as pet_name, users.name as owner_name, users.email as owner_email
-       ${TAG_DETAIL_FROM}
-       ${where.sql}
-       ORDER BY tags.created_at DESC, tags.code ASC
-       LIMIT ? OFFSET ?`
-    )
-    .all(...where.params, limit, offset) as unknown as TagDetailedRow[];
+  return all<TagDetailedRow>(
+    `SELECT tags.*, pets.name as pet_name, users.name as owner_name, users.email as owner_email
+     ${TAG_DETAIL_FROM}
+     ${where.sql}
+     ORDER BY tags.created_at DESC, tags.code ASC
+     LIMIT ? OFFSET ?`,
+    ...where.params,
+    limit,
+    offset
+  );
 }
 
-export function countTagsDetailed(filter: TagFilter = {}): number {
+export async function countTagsDetailed(filter: TagFilter = {}): Promise<number> {
   const where = buildTagWhere(filter);
-  const row = db
-    .prepare(`SELECT COUNT(*) as c ${TAG_DETAIL_FROM} ${where.sql}`)
-    .get(...where.params) as { c: number };
-  return row.c;
+  const row = await get<{ c: number }>(
+    `SELECT COUNT(*) as c ${TAG_DETAIL_FROM} ${where.sql}`,
+    ...where.params
+  );
+  return row?.c ?? 0;
 }
 
 export interface BatchSummary {
@@ -212,30 +212,27 @@ export interface BatchSummary {
   created_at: string;
 }
 
-export function listBatches(): BatchSummary[] {
-  return db
-    .prepare(
-      `SELECT COALESCE(batch_label, 'Sin lote') as label,
-              COUNT(*) as total,
-              SUM(status = 'ASSIGNED') as assigned,
-              SUM(status = 'REVOKED') as revoked,
-              MIN(created_at) as created_at
-       FROM tags
-       GROUP BY COALESCE(batch_label, 'Sin lote')
-       ORDER BY MIN(created_at) DESC`
-    )
-    .all() as unknown as BatchSummary[];
+export async function listBatches(): Promise<BatchSummary[]> {
+  return all<BatchSummary>(
+    `SELECT COALESCE(batch_label, 'Sin lote') as label,
+            COUNT(*) as total,
+            SUM(status = 'ASSIGNED') as assigned,
+            SUM(status = 'REVOKED') as revoked,
+            MIN(created_at) as created_at
+     FROM tags
+     GROUP BY COALESCE(batch_label, 'Sin lote')
+     ORDER BY MIN(created_at) DESC`
+  );
 }
 
 /** Todas las tarjetas de un lote, en orden de generación (para exportar o imprimir). */
-export function listTagsForBatch(label: string): TagDetailedRow[] {
+export async function listTagsForBatch(label: string): Promise<TagDetailedRow[]> {
   const isUnlabeled = label === "Sin lote";
-  return db
-    .prepare(
-      `SELECT tags.*, pets.name as pet_name, users.name as owner_name, users.email as owner_email
-       ${TAG_DETAIL_FROM}
-       WHERE ${isUnlabeled ? "tags.batch_label IS NULL" : "tags.batch_label = ?"}
-       ORDER BY tags.created_at ASC, tags.code ASC`
-    )
-    .all(...(isUnlabeled ? [] : [label])) as unknown as TagDetailedRow[];
+  return all<TagDetailedRow>(
+    `SELECT tags.*, pets.name as pet_name, users.name as owner_name, users.email as owner_email
+     ${TAG_DETAIL_FROM}
+     WHERE ${isUnlabeled ? "tags.batch_label IS NULL" : "tags.batch_label = ?"}
+     ORDER BY tags.created_at ASC, tags.code ASC`,
+    ...(isUnlabeled ? [] : [label])
+  );
 }

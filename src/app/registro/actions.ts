@@ -35,12 +35,12 @@ export async function registerAction(
   const limit = rateLimit(`register:${ip}`, 10, 60 * 60 * 1000);
   if (!limit.ok) return { error: tooManyAttemptsMessage(limit.retryAfterSeconds), values };
 
-  if (findUserByEmail(email)) {
+  if (await findUserByEmail(email)) {
     return { error: "Ya hay una cuenta con ese email. Ingresá o recuperá tu contraseña.", values };
   }
 
   const passwordHash = await hashPassword(password);
-  const user = createUser({ email, passwordHash, name, phone, whatsapp });
+  const user = await createUser({ email, passwordHash, name, phone, whatsapp });
 
   await setSessionCookie({ sub: user.id, role: "OWNER", name: user.name, ver: user.session_version });
   redirect(safeNextPath(formData.get("next")));

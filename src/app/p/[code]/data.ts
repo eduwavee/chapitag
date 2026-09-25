@@ -3,8 +3,8 @@ import { lookupTag } from "@/lib/repo/pets";
 import { listPetPhotos } from "@/lib/repo/petPhotos";
 
 /** Una sola consulta por request, compartida entre generateMetadata, la página y la imagen OG. */
-export const getTagView = cache((code: string) => {
-  const result = lookupTag(code);
+export const getTagView = cache(async (code: string) => {
+  const result = await lookupTag(code);
   if (result.state !== "assigned") return { ...result, photos: [] as string[] };
-  return { ...result, photos: listPetPhotos(result.pet.id).map((p) => p.url) };
+  return { ...result, photos: (await listPetPhotos(result.pet.id)).map((p) => p.url) };
 });
