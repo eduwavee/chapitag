@@ -39,11 +39,11 @@ export default async function AdminHomePage({ searchParams }: { searchParams: Pr
   const filter = { q: sp.q, status, batch: sp.lote };
   const page = Math.max(1, parseInt(sp.pagina || "1", 10) || 1);
 
-  const counts = countTagsByStatus();
-  const scansWeek = countScansSince(7);
-  const batches = listBatches();
-  const total = countTagsDetailed(filter);
-  const tags = listTagsDetailed(filter, PAGE_SIZE, (page - 1) * PAGE_SIZE);
+  const counts = await countTagsByStatus();
+  const scansWeek = await countScansSince(7);
+  const batches = await listBatches();
+  const total = await countTagsDetailed(filter);
+  const tags = await listTagsDetailed(filter, PAGE_SIZE, (page - 1) * PAGE_SIZE);
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const filtered = !!(filter.q || filter.status || filter.batch);
 

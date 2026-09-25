@@ -17,7 +17,7 @@ export default async function PanelHomePage({
   searchParams: Promise<{ borrada?: string }>;
 }) {
   const session = await requireOwnerSession();
-  const pets = session ? listPetsByOwner(session.sub) : [];
+  const pets = session ? await listPetsByOwner(session.sub) : [];
   const { borrada } = await searchParams;
 
   return (

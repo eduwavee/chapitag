@@ -94,11 +94,11 @@ src/
     profile/                    perfil público (compartido con la demo del inicio)
     PetForm.tsx, form.tsx       formularios
   lib/
-    db.ts, schema.sql           SQLite (node:sqlite) y migraciones automáticas
+    db.ts, schema.sql           SQLite con libSQL (archivo local o Turso) y migraciones automáticas
     auth.ts                     sesiones JWT en cookie httpOnly
     repo/                       acceso a datos (users, pets, tags, scans, admins)
     email.ts, notify.ts         emails con Resend y avisos de escaneo
-    upload.ts                   fotos: validación, WebP 1600px y sin GPS (sharp)
+    upload.ts                   fotos: validación, WebP 1600px y sin GPS (sharp); disco o Vercel Blob
     themes.ts                   los 8 colores anodizados de las chapitas
 scripts/seed.mjs                datos iniciales: admin, mascota de ejemplo y lote de prueba
 public/demo/                    foto de la mascota de ejemplo
@@ -106,11 +106,11 @@ docs/                           capturas para este README
 PRODUCT.md, DESIGN.md           producto y sistema de diseño
 ```
 
-Hecho con **Next.js 16** (App Router, Server Actions), **React 19**, **Tailwind CSS 4** y **SQLite** con el módulo nativo `node:sqlite`, sin base de datos aparte.
+Hecho con **Next.js 16** (App Router, Server Actions), **React 19**, **Tailwind CSS 4** y **SQLite** vía [libSQL](https://github.com/tursodatabase/libsql-client-ts): en la compu es un archivo, sin base de datos aparte; publicada, la misma base vive en [Turso](https://turso.tech) y las fotos en Vercel Blob.
 
 ## Verlo en tu compu
 
-Necesitás **Node.js 22.5 o superior**.
+Necesitás **Node.js 22 o superior**.
 
 ```bash
 npm install
@@ -135,7 +135,9 @@ Sin `RESEND_API_KEY`, los emails (avisos de escaneo, recuperar contraseña) no s
 | Variable | Para qué |
 |---|---|
 | `JWT_SECRET` | Firma de las sesiones. Una cadena larga y al azar. **Obligatoria.** |
-| `DB_PATH` | Dónde vive la base SQLite (por defecto `./data/app.db`). |
+| `DB_PATH` | Dónde vive la base SQLite en la compu (por defecto `./data/app.db`). Se ignora si está `TURSO_DATABASE_URL`. |
+| `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` | La base en [Turso](https://turso.tech) (`libsql://...`) para publicar en Vercel u otra plataforma sin disco. Sin ellas se usa el archivo local. |
+| `BLOB_STORE_ID` o `BLOB_READ_WRITE_TOKEN` | Store privado de Vercel Blob para las fotos. Vercel las carga solas al conectar el store al proyecto. Sin ellas, las fotos van a `data/uploads/`. |
 | `APP_URL` | URL pública sin barra final, por ejemplo `https://tudominio.com.ar`. Es la que va en los chips, los QR, los emails y la vista previa. En desarrollo se puede dejar vacía. |
 | `RESEND_API_KEY` | API key de [Resend](https://resend.com) para mandar emails. |
 | `EMAIL_FROM` | Remitente con un dominio verificado en Resend, por ejemplo `ChapiTag <avisos@tudominio.com.ar>`. |
@@ -148,11 +150,29 @@ Sin `RESEND_API_KEY`, los emails (avisos de escaneo, recuperar contraseña) no s
 4. **Admin:** corré `npm run seed` una sola vez y cambiá la contraseña del operador desde **Admin → Cuenta**.
 5. **Canal de venta:** cuando esté definido (tienda propia, Mercado Libre, veterinarias), sumá el link de compra en el inicio (`src/app/LandingHero.tsx`).
 6. **HTTPS:** necesario para las cookies de sesión y para que el navegador comparta la ubicación.
-7. **Backups:** respaldá `data/app.db` y `data/uploads/` periódicamente.
+7. **Backups:** en un servidor propio, respaldá `data/app.db` y `data/uploads/` periódicamente (en Turso y Blob el respaldo lo maneja cada servicio).
 
 ## Publicar
 
-La app guarda la base SQLite y las fotos en disco (`data/`), así que necesita un **servidor con disco persistente**: un VPS, Docker, Railway, Render o Fly.io.
+### En Vercel (como chapitag.vercel.app)
+
+En serverless el disco se borra entre invocaciones, así que la base va a Turso y las fotos a Vercel Blob. El código es el mismo: elige solo según las variables de entorno.
+
+1. En el proyecto de Vercel, **Storage → Turso** (Marketplace) crea la base y carga `TURSO_DATABASE_URL` y `TURSO_AUTH_TOKEN`.
+2. **Storage → Blob → Create store**, privado, conectado al proyecto (carga `BLOB_STORE_ID`).
+3. Cargá `JWT_SECRET` y `APP_URL` en **Settings → Environment Variables**.
+4. Sembrá la base publicada una vez, desde tu compu, con contraseñas propias:
+   ```bash
+   vercel env pull .env.local
+   SEED_ADMIN_PASSWORD='...' SEED_DEMO_PASSWORD='...' npm run seed
+   ```
+5. Push a `master`: Vercel publica solo.
+
+El límite de intentos (`src/lib/rateLimit.ts`) vive en memoria de cada instancia: alcanza para frenar abusos simples; si hace falta uno global, pasarlo a Redis (Upstash).
+
+### En un servidor propio
+
+Con disco persistente (un VPS, Docker, Railway, Render o Fly.io) no hace falta nada de lo anterior: la base y las fotos quedan en `data/`.
 
 ```bash
 npm ci
@@ -161,7 +181,6 @@ npm run seed     # solo la primera vez
 npm run start    # puerto 3000; poné un proxy con HTTPS adelante (Nginx, Caddy)
 ```
 
-No es apta tal cual para Vercel u otras plataformas serverless, porque ahí el disco se borra entre invocaciones. Para eso habría que pasar `src/lib/db.ts` a una base administrada (Postgres en Neon o Supabase, Turso) y `src/lib/upload.ts` + `src/app/api/uploads/` a un storage externo (Vercel Blob, S3, Cloudinary). El resto del código queda igual. Si corre en más de una instancia, el límite de intentos en memoria (`src/lib/rateLimit.ts`) tiene que pasar a Redis.
 
 ## Próxima etapa
 

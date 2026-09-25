@@ -34,7 +34,7 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const session = await requireOwnerSession();
   const { id } = await params;
-  const pet = session ? findOwnedPet(id, session.sub) : undefined;
+  const pet = session ? await findOwnedPet(id, session.sub) : undefined;
   return { title: pet?.name ?? "Mascota" };
 }
 
@@ -44,14 +44,14 @@ export default async function MascotaPage({ params, searchParams }: Props) {
 
   const { id } = await params;
   const flags = await searchParams;
-  const pet = findOwnedPet(id, session.sub);
+  const pet = await findOwnedPet(id, session.sub);
   if (!pet) notFound();
 
-  const tag = findActiveTagForPet(pet.id);
+  const tag = await findActiveTagForPet(pet.id);
   const publicUrl = tag ? await publicPetUrl(tag.code) : null;
   const qr = publicUrl ? await qrSvgInline(publicUrl, { margin: 0 }) : null;
-  const scans = listScansForPet(pet.id, 15);
-  const totalScans = countScansForPet(pet.id);
+  const scans = await listScansForPet(pet.id, 15);
+  const totalScans = await countScansForPet(pet.id);
   const lost = !!pet.lost;
 
   const notice =

@@ -25,7 +25,7 @@ import type { PetFormState } from "@/components/PetForm";
 async function ownedPetOrRedirect(petId: string) {
   const session = await requireOwnerSession();
   if (!session) redirect("/ingresar");
-  const pet = findOwnedPet(petId, session.sub);
+  const pet = await findOwnedPet(petId, session.sub);
   if (!pet) redirect("/panel");
   return { session, pet };
 }
@@ -41,20 +41,20 @@ export async function updatePetAction(
   const parsed = await parsePetForm(formData);
   if (!parsed.ok) return { error: parsed.error, values };
 
-  updatePet(petId, session.sub, parsed.input);
+  await updatePet(petId, session.sub, parsed.input);
 
   // Portada reemplazada o sacada: el archivo viejo ya no se usa.
   if ((parsed.input.photoUrl || parsed.input.removePhoto) && pet.photo_url) {
-    deleteUploadedFile(pet.photo_url);
+    await deleteUploadedFile(pet.photo_url);
   }
 
   for (const photoId of formData.getAll("deletePhotoIds")) {
-    deleteUploadedFile(deletePetPhoto(String(photoId), petId));
+    await deleteUploadedFile(await deletePetPhoto(String(photoId), petId));
   }
-  const remainingSlots = Math.max(0, MAX_GALLERY_PHOTOS - countPetPhotos(petId));
-  parsed.galleryPhotoUrls.slice(remainingSlots).forEach(deleteUploadedFile);
+  const remainingSlots = Math.max(0, MAX_GALLERY_PHOTOS - await countPetPhotos(petId));
+  await Promise.all(parsed.galleryPhotoUrls.slice(remainingSlots).map(deleteUploadedFile));
   for (const url of parsed.galleryPhotoUrls.slice(0, remainingSlots)) {
-    addPetPhoto(petId, url);
+    await addPetPhoto(petId, url);
   }
 
   redirect(`/panel/mascotas/${petId}?guardada=1`);
@@ -66,14 +66,14 @@ export async function setLostAction(petId: string, formData: FormData): Promise<
   const { session } = await ownedPetOrRedirect(petId);
   const lost = formData.get("lost") === "1";
   const note = String(formData.get("lostNote") || "").slice(0, 280);
-  setPetLost(petId, session.sub, lost, note);
+  await setPetLost(petId, session.sub, lost, note);
   revalidatePath(`/panel/mascotas/${petId}`);
   revalidatePath("/panel");
 }
 
 export async function setNotifyAction(petId: string, formData: FormData): Promise<void> {
   const { session } = await ownedPetOrRedirect(petId);
-  setPetNotifyScans(petId, session.sub, formData.get("notify") === "1");
+  await setPetNotifyScans(petId, session.sub, formData.get("notify") === "1");
   revalidatePath(`/panel/mascotas/${petId}`);
 }
 
@@ -86,7 +86,7 @@ export async function replaceTagAction(
   const code = String(formData.get("newCode") || "").trim();
   if (!code) return { error: "Escribí el código de la chapita nueva." };
 
-  const result = replaceTagForPet(petId, code);
+  const result = await replaceTagForPet(petId, code);
   if (!result.ok) {
     return {
       error:
@@ -104,8 +104,8 @@ export async function deletePetAction(petId: string, formData: FormData): Promis
   if (confirmName !== pet.name.trim().toLowerCase()) {
     redirect(`/panel/mascotas/${petId}?borrar=error#borrar`);
   }
-  const photos = deletePet(petId, session.sub) ?? [];
-  photos.forEach(deleteUploadedFile);
+  const photos = await deletePet(petId, session.sub) ?? [];
+  await Promise.all(photos.map(deleteUploadedFile));
   revalidatePath("/panel");
   redirect("/panel?borrada=1");
 }
