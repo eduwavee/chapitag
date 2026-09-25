@@ -21,7 +21,7 @@ export default async function ActivarPage({
 }) {
   const { codigo } = await searchParams;
   const code = codigo ? normalizeCode(codigo) : "";
-  const tag = code ? findTagByCode(code) : undefined;
+  const tag = code ? await findTagByCode(code) : undefined;
 
   let error: string | undefined;
   if (code && !tag) error = "No encontramos una chapita con ese código. Revisá que esté bien escrito (son 8 letras y números).";

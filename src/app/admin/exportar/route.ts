@@ -20,7 +20,7 @@ export async function GET(request: Request) {
   if (!session) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
   const lote = new URL(request.url).searchParams.get("lote");
-  const tags = lote ? listTagsForBatch(lote) : listTagsDetailed({}, 100000, 0);
+  const tags = lote ? await listTagsForBatch(lote) : await listTagsDetailed({}, 100000, 0);
   const base = await getBaseUrl();
 
   const header = ["codigo", "url_nfc", "estado", "lote", "creada", "activada", "mascota", "dueño_email"];

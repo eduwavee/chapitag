@@ -29,7 +29,7 @@ La chapita no tiene datos grabados: guarda un link a un perfil vivo que el dueñ
 
 ## Capabilities and Constraints
 
-- Next.js 16 (App Router, Server Actions) + React 19 + Tailwind v4. SQLite vía `node:sqlite` y fotos en disco (`data/`): necesita servidor con disco persistente (VPS/Docker/Railway/Fly), no serverless tal cual.
+- Next.js 16 (App Router, Server Actions) + React 19 + Tailwind v4. SQLite vía libSQL: en la compu, archivo y fotos en disco (`data/`); publicada en Vercel, la base en Turso y las fotos en un store privado de Vercel Blob.
 - Roles: dueño (OWNER) y administrador (ADMIN), sesión JWT en cookie httpOnly.
 - Perfil público personalizable: tema de color, galería de hasta 5 fotos, insignias de estado, veterinario, seguro, personalidad, contacto alternativo, recompensa, ubicación (ciudad o dirección exacta, a elección del dueño).
 - En construcción: modo perdido, registro de escaneos con ubicación opcional del que encuentra, avisos por email (Resend), gestión de cuenta (datos, contraseña, recuperación), borrar mascota, reemplazar chapita, activar chapita al escanearla, QR por mascota, afiche "Se busca" imprimible, vista previa al compartir, herramientas de admin para imprenta (búsqueda, filtros, CSV, hoja de QR).

@@ -15,7 +15,7 @@ export async function POST(
   { params }: { params: Promise<{ code: string }> }
 ) {
   const { code } = await params;
-  const view = lookupTag(code);
+  const view = await lookupTag(code);
   if (view.state !== "assigned") {
     return NextResponse.json({ error: "Esta chapita no tiene un perfil activo." }, { status: 404 });
   }
@@ -46,7 +46,7 @@ export async function POST(
   }
 
   const { pet, tag } = view;
-  const scan = recordScan({
+  const scan = await recordScan({
     petId: pet.id,
     tagCode: tag.code,
     kind: "location",

@@ -23,14 +23,14 @@ export default async function AfichePage({ params }: { params: Promise<{ id: str
   const session = await requireOwnerSession();
   if (!session) redirect("/ingresar");
   const { id } = await params;
-  const pet = findOwnedPet(id, session.sub);
+  const pet = await findOwnedPet(id, session.sub);
   if (!pet) notFound();
 
-  const tag = findActiveTagForPet(pet.id);
+  const tag = await findActiveTagForPet(pet.id);
   const url = tag ? await publicPetUrl(tag.code) : null;
   const qr = url ? await qrSvgInline(url, { margin: 0 }) : null;
   // Portada o, si no hay, la primera foto de la galería (igual que el perfil y la vista previa).
-  const photoUrl = pet.photo_url ?? listPetPhotos(pet.id)[0]?.url ?? null;
+  const photoUrl = pet.photo_url ?? (await listPetPhotos(pet.id))[0]?.url ?? null;
   const contactPhone = formatPhone(pet.contact_phone);
   const phone = formatPhone(pet.contact_whatsapp || pet.contact_phone);
   const facts = [speciesLabel(pet.species), pet.breed, pet.color, sexLabel(pet.sex)].filter(Boolean).join(" · ");

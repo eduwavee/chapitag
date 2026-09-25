@@ -1,11 +1,9 @@
-import fs from "node:fs";
 import path from "node:path";
 import { NextRequest, NextResponse } from "next/server";
-import { uploadsDir } from "@/lib/upload";
+import { readUpload, UPLOAD_NAME } from "@/lib/upload";
 
 // Nunca cachear estáticamente esta ruta: los archivos se agregan en tiempo
-// de ejecución (fotos subidas por los usuarios) y necesitamos leerlos del
-// disco en cada request.
+// de ejecución (fotos subidas por los usuarios).
 export const dynamic = "force-dynamic";
 
 const CONTENT_TYPES: Record<string, string> = {
@@ -22,18 +20,17 @@ export async function GET(
   const { filename } = await params;
 
   // Evita path traversal: solo permitimos nombres de archivo "planos".
-  if (!/^[a-zA-Z0-9-]+\.(jpg|jpeg|png|webp)$/.test(filename)) {
+  if (!UPLOAD_NAME.test(filename)) {
     return NextResponse.json({ error: "Nombre de archivo inválido" }, { status: 400 });
   }
 
-  const filePath = path.join(uploadsDir(), filename);
-  if (!fs.existsSync(filePath)) {
+  const data = await readUpload(filename);
+  if (!data) {
     return NextResponse.json({ error: "No encontrado" }, { status: 404 });
   }
 
   const ext = path.extname(filename).toLowerCase();
   const contentType = CONTENT_TYPES[ext] || "application/octet-stream";
-  const data = fs.readFileSync(filePath);
 
   return new NextResponse(new Uint8Array(data), {
     headers: {

@@ -31,9 +31,9 @@ export async function requestResetAction(
   const limit = rateLimit(`reset:${ip}`, 5, 60 * 60 * 1000);
   if (!limit.ok) return { error: tooManyAttemptsMessage(limit.retryAfterSeconds), values };
 
-  const user = findUserByEmail(email);
+  const user = await findUserByEmail(email);
   if (user) {
-    const token = createPasswordReset(user.id);
+    const token = await createPasswordReset(user.id);
     const url = `${await getBaseUrl()}/recuperar/${token}`;
     await sendEmail({
       to: user.email,
@@ -63,12 +63,12 @@ export async function resetPasswordAction(
     return { error: `La contraseña tiene que tener al menos ${MIN_PASSWORD_LENGTH} caracteres.` };
   }
 
-  const user = findValidPasswordReset(token);
+  const user = await findValidPasswordReset(token);
   if (!user) {
     return { error: "Este link venció o ya se usó. Pedí uno nuevo." };
   }
 
-  updateUserPassword(user.id, await hashPassword(password));
-  markPasswordResetUsed(token);
+  await updateUserPassword(user.id, await hashPassword(password));
+  await markPasswordResetUsed(token);
   redirect("/ingresar?reset=1");
 }

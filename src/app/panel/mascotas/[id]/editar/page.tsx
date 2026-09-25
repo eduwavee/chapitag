@@ -15,10 +15,10 @@ export default async function EditarMascotaPage({ params }: { params: Promise<{ 
   const session = await requireOwnerSession();
   if (!session) redirect("/ingresar");
   const { id } = await params;
-  const pet = findOwnedPet(id, session.sub);
+  const pet = await findOwnedPet(id, session.sub);
   if (!pet) notFound();
 
-  const photos = listPetPhotos(pet.id);
+  const photos = await listPetPhotos(pet.id);
 
   return (
     <div>

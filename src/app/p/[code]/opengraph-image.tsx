@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { ImageResponse } from "next/og";
 import { getTheme } from "@/lib/themes";
-import { uploadsDir } from "@/lib/upload";
+import { readUpload, uploadNameFromUrl } from "@/lib/upload";
 import { getTagView } from "./data";
 
 export const size = { width: 1200, height: 630 };
@@ -11,17 +11,17 @@ export const alt = "Perfil de mascota en ChapiTag";
 
 /** La foto de portada como data URL (ImageResponse no lee rutas locales). WebP no está soportado: se convierte con sharp. */
 async function photoDataUrl(url: string | null): Promise<string | null> {
-  // Fotos subidas (data/uploads) o las de ejemplo versionadas en public/demo.
-  const upload = url?.match(/^\/api\/uploads\/([a-zA-Z0-9-]+\.(?:jpg|jpeg|png|webp))$/);
+  // Fotos subidas (Blob o data/uploads) o las de ejemplo versionadas en
+  // public/demo (next.config.ts las suma al paquete de la función).
+  const upload = uploadNameFromUrl(url);
   const demo = url?.match(/^\/demo\/([a-zA-Z0-9-]+\.(?:jpg|jpeg|png|webp))$/);
-  const filePath = upload
-    ? path.join(uploadsDir(), upload[1])
-    : demo
-      ? path.join(process.cwd(), "public", "demo", demo[1])
-      : null;
-  if (!filePath) return null;
   try {
-    const file = fs.readFileSync(filePath);
+    const file = upload
+      ? await readUpload(upload)
+      : demo
+        ? fs.readFileSync(path.join(process.cwd(), "public", "demo", demo[1]))
+        : null;
+    if (!file) return null;
     const sharp = (await import("sharp")).default;
     const png = await sharp(file).resize(560, 560, { fit: "cover" }).jpeg({ quality: 82 }).toBuffer();
     return `data:image/jpeg;base64,${png.toString("base64")}`;
@@ -36,7 +36,7 @@ async function photoDataUrl(url: string | null): Promise<string | null> {
  */
 export default async function Image({ params }: { params: Promise<{ code: string }> }) {
   const { code } = await params;
-  const view = getTagView(code);
+  const view = await getTagView(code);
   const pet = view.state === "assigned" ? view.pet : null;
   const theme = getTheme(pet?.theme);
   const photo = await photoDataUrl(pet?.photo_url ?? view.photos[0] ?? null);

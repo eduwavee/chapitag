@@ -23,7 +23,7 @@ export async function adminLoginAction(
   const limit = rateLimit(`admin-login:${ip}`, 6, 15 * 60 * 1000);
   if (!limit.ok) return { error: tooManyAttemptsMessage(limit.retryAfterSeconds), values };
 
-  const admin = findAdminByEmail(email);
+  const admin = await findAdminByEmail(email);
   if (!admin || !(await verifyPassword(password, admin.password_hash))) {
     return { error: "El email o la contraseña no coinciden.", values };
   }

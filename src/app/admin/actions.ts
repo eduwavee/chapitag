@@ -22,7 +22,7 @@ export async function generateBatchAction(
     return { error: "La cantidad tiene que estar entre 1 y 500." };
   }
 
-  const { label, tags } = generateTagBatch(count, batchLabel);
+  const { label, tags } = await generateTagBatch(count, batchLabel);
   revalidatePath("/admin");
   return {
     success: `Listo: ${tags.length} chapitas nuevas en “${label}”.`,
@@ -35,7 +35,7 @@ export async function revokeTagAction(formData: FormData): Promise<void> {
   if (!session) redirect("/admin/ingresar");
 
   const code = String(formData.get("code") || "").trim();
-  if (code) revokeTag(code);
+  if (code) await revokeTag(code);
   revalidatePath("/admin");
 }
 
@@ -45,7 +45,7 @@ export async function changeAdminPasswordAction(
 ): Promise<{ error?: string; success?: string }> {
   const session = await requireAdminSession();
   if (!session) redirect("/admin/ingresar");
-  const admin = findAdminById(session.sub);
+  const admin = await findAdminById(session.sub);
   if (!admin) redirect("/admin/ingresar");
 
   const current = String(formData.get("currentPassword") || "");
@@ -56,7 +56,7 @@ export async function changeAdminPasswordAction(
   if (next.length < MIN_PASSWORD_LENGTH) {
     return { error: `La contraseña nueva tiene que tener al menos ${MIN_PASSWORD_LENGTH} caracteres.` };
   }
-  const updated = updateAdminPassword(admin.id, await hashPassword(next));
+  const updated = await updateAdminPassword(admin.id, await hashPassword(next));
   await setSessionCookie({ sub: updated.id, role: "ADMIN", name: updated.name, ver: updated.session_version });
   return { success: "Contraseña cambiada." };
 }
