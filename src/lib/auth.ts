@@ -101,7 +101,7 @@ export async function getSession(): Promise<SessionPayload | null> {
 export async function requireOwnerSession(): Promise<SessionPayload | null> {
   const session = await getSession();
   if (!session || session.role !== "OWNER") return null;
-  const user = findUserById(session.sub);
+  const user = await findUserById(session.sub);
   if (!user || user.session_version !== session.ver) return null;
   return { ...session, name: user.name };
 }
@@ -109,7 +109,7 @@ export async function requireOwnerSession(): Promise<SessionPayload | null> {
 export async function requireAdminSession(): Promise<SessionPayload | null> {
   const session = await getSession();
   if (!session || session.role !== "ADMIN") return null;
-  const admin = findAdminById(session.sub);
+  const admin = await findAdminById(session.sub);
   if (!admin || admin.session_version !== session.ver) return null;
   return { ...session, name: admin.name };
 }

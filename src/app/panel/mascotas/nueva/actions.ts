@@ -25,11 +25,11 @@ export async function createPetAction(
   const parsed = await parsePetForm(formData);
   if (!parsed.ok) return { error: parsed.error, values };
 
-  const result = createPetWithTag(session.sub, parsed.input, tagCode);
+  const result = await createPetWithTag(session.sub, parsed.input, tagCode);
   if (!result.ok) {
     // Las fotos ya se guardaron: se borran para no dejar archivos huérfanos.
-    deleteUploadedFile(parsed.input.photoUrl);
-    parsed.galleryPhotoUrls.forEach(deleteUploadedFile);
+    await deleteUploadedFile(parsed.input.photoUrl);
+    await Promise.all(parsed.galleryPhotoUrls.map(deleteUploadedFile));
     return {
       error:
         result.error === "TAG_NOT_FOUND"
@@ -40,7 +40,7 @@ export async function createPetAction(
   }
 
   for (const url of parsed.galleryPhotoUrls) {
-    addPetPhoto(result.pet.id, url);
+    await addPetPhoto(result.pet.id, url);
   }
 
   redirect(`/panel/mascotas/${result.pet.id}?creada=1`);

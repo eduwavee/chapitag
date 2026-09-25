@@ -13,7 +13,7 @@ export async function GET(
   { params }: { params: Promise<{ code: string }> }
 ) {
   const { code } = await params;
-  const tag = findTagByCode(code);
+  const tag = await findTagByCode(code);
   if (!tag || tag.status === "REVOKED") {
     return NextResponse.json({ error: "Chapita no encontrada" }, { status: 404 });
   }

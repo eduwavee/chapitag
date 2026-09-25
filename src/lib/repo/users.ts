@@ -1,5 +1,5 @@
 import { createHash, randomBytes } from "node:crypto";
-import { db } from "@/lib/db";
+import { get, run } from "@/lib/db";
 import { newId } from "@/lib/ids";
 
 export interface UserRow {
@@ -13,30 +13,25 @@ export interface UserRow {
   created_at: string;
 }
 
-export function findUserByEmail(email: string): UserRow | undefined {
-  return db
-    .prepare("SELECT * FROM users WHERE email = ?")
-    .get(email.trim().toLowerCase()) as UserRow | undefined;
+export async function findUserByEmail(email: string): Promise<UserRow | undefined> {
+  return get<UserRow>("SELECT * FROM users WHERE email = ?", email.trim().toLowerCase());
 }
 
-export function findUserById(id: string): UserRow | undefined {
-  return db.prepare("SELECT * FROM users WHERE id = ?").get(id) as
-    | UserRow
-    | undefined;
+export async function findUserById(id: string): Promise<UserRow | undefined> {
+  return get<UserRow>("SELECT * FROM users WHERE id = ?", id);
 }
 
-export function createUser(input: {
+export async function createUser(input: {
   email: string;
   passwordHash: string;
   name: string;
   phone: string;
   whatsapp?: string;
-}): UserRow {
+}): Promise<UserRow> {
   const id = newId();
-  db.prepare(
+  await run(
     `INSERT INTO users (id, email, password_hash, name, phone, whatsapp)
-     VALUES (?, ?, ?, ?, ?, ?)`
-  ).run(
+     VALUES (?, ?, ?, ?, ?, ?)`,
     id,
     input.email.trim().toLowerCase(),
     input.passwordHash,
@@ -44,31 +39,32 @@ export function createUser(input: {
     input.phone.trim(),
     input.whatsapp?.trim() || null
   );
-  return findUserById(id)!;
+  return (await findUserById(id))!;
 }
 
-export function updateUserProfile(
+export async function updateUserProfile(
   id: string,
   input: { name: string; email: string; phone: string; whatsapp?: string }
-): UserRow {
-  db.prepare(
-    `UPDATE users SET name = ?, email = ?, phone = ?, whatsapp = ? WHERE id = ?`
-  ).run(
+): Promise<UserRow> {
+  await run(
+    `UPDATE users SET name = ?, email = ?, phone = ?, whatsapp = ? WHERE id = ?`,
     input.name.trim(),
     input.email.trim().toLowerCase(),
     input.phone.trim(),
     input.whatsapp?.trim() || null,
     id
   );
-  return findUserById(id)!;
+  return (await findUserById(id))!;
 }
 
 /** Cambia la contraseña e invalida las sesiones abiertas en otros dispositivos. */
-export function updateUserPassword(id: string, passwordHash: string): UserRow {
-  db.prepare(
-    `UPDATE users SET password_hash = ?, session_version = session_version + 1 WHERE id = ?`
-  ).run(passwordHash, id);
-  return findUserById(id)!;
+export async function updateUserPassword(id: string, passwordHash: string): Promise<UserRow> {
+  await run(
+    `UPDATE users SET password_hash = ?, session_version = session_version + 1 WHERE id = ?`,
+    passwordHash,
+    id
+  );
+  return (await findUserById(id))!;
 }
 
 // --- Recuperación de contraseña ------------------------------------------
@@ -80,29 +76,33 @@ function hashToken(token: string): string {
 }
 
 /** Crea un token de un solo uso. Solo se guarda su hash: el token viaja únicamente en el email. */
-export function createPasswordReset(userId: string): string {
+export async function createPasswordReset(userId: string): Promise<string> {
   const token = randomBytes(32).toString("base64url");
-  db.prepare("DELETE FROM password_resets WHERE user_id = ? AND used_at IS NULL").run(userId);
-  db.prepare(
+  await run("DELETE FROM password_resets WHERE user_id = ? AND used_at IS NULL", userId);
+  await run(
     `INSERT INTO password_resets (id, user_id, token_hash, expires_at)
-     VALUES (?, ?, ?, datetime('now', ?))`
-  ).run(newId(), userId, hashToken(token), `+${RESET_TTL_MINUTES} minutes`);
+     VALUES (?, ?, ?, datetime('now', ?))`,
+    newId(),
+    userId,
+    hashToken(token),
+    `+${RESET_TTL_MINUTES} minutes`
+  );
   return token;
 }
 
 /** Usuario dueño de un token vigente y sin usar, o undefined. */
-export function findValidPasswordReset(token: string): UserRow | undefined {
-  const row = db
-    .prepare(
-      `SELECT user_id FROM password_resets
-       WHERE token_hash = ? AND used_at IS NULL AND expires_at > datetime('now')`
-    )
-    .get(hashToken(token)) as { user_id: string } | undefined;
+export async function findValidPasswordReset(token: string): Promise<UserRow | undefined> {
+  const row = await get<{ user_id: string }>(
+    `SELECT user_id FROM password_resets
+     WHERE token_hash = ? AND used_at IS NULL AND expires_at > datetime('now')`,
+    hashToken(token)
+  );
   return row ? findUserById(row.user_id) : undefined;
 }
 
-export function markPasswordResetUsed(token: string): void {
-  db.prepare("UPDATE password_resets SET used_at = datetime('now') WHERE token_hash = ?").run(
+export async function markPasswordResetUsed(token: string): Promise<void> {
+  await run(
+    "UPDATE password_resets SET used_at = datetime('now') WHERE token_hash = ?",
     hashToken(token)
   );
 }
