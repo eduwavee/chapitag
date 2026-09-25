@@ -18,7 +18,7 @@ const PER_PAGE = 35; // 5 × 7 en A4
  */
 export default async function ImprimirPage({ searchParams }: { searchParams: Promise<{ lote?: string }> }) {
   const { lote } = await searchParams;
-  const tags = lote ? listTagsForBatch(lote).filter((t) => t.status !== "REVOKED") : [];
+  const tags = lote ? (await listTagsForBatch(lote)).filter((t) => t.status !== "REVOKED") : [];
   const base = await getBaseUrl();
   const cells = await Promise.all(
     tags.map(async (t) => ({ code: t.code, svg: await qrSvgInline(`${base}/p/${t.code}`, { margin: 0 }) }))

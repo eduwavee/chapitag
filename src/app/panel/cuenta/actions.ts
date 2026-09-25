@@ -31,12 +31,12 @@ export async function updateProfileAction(
   if (!looksLikePhone(phone) || (whatsapp && !looksLikePhone(whatsapp))) {
     return { error: "El teléfono parece incompleto. Escribilo con código de área.", values };
   }
-  const other = findUserByEmail(email);
+  const other = await findUserByEmail(email);
   if (other && other.id !== session.sub) {
     return { error: "Ya hay otra cuenta con ese email.", values };
   }
 
-  const user = updateUserProfile(session.sub, { name, email, phone, whatsapp });
+  const user = await updateUserProfile(session.sub, { name, email, phone, whatsapp });
   // El nombre viaja en la sesión: se renueva para que el header lo muestre.
   await setSessionCookie({ sub: user.id, role: "OWNER", name: user.name, ver: user.session_version });
   revalidatePath("/panel", "layout");
@@ -54,7 +54,7 @@ export async function changePasswordAction(
 
   const current = String(formData.get("currentPassword") || "");
   const next = String(formData.get("newPassword") || "");
-  const user = findUserById(session.sub);
+  const user = await findUserById(session.sub);
   if (!user) redirect("/ingresar");
 
   if (!(await verifyPassword(current, user.password_hash))) {
@@ -64,7 +64,7 @@ export async function changePasswordAction(
     return { error: `La contraseña nueva tiene que tener al menos ${MIN_PASSWORD_LENGTH} caracteres.` };
   }
 
-  const updated = updateUserPassword(user.id, await hashPassword(next));
+  const updated = await updateUserPassword(user.id, await hashPassword(next));
   // Las otras sesiones quedan invalidadas; esta se renueva con la versión nueva.
   await setSessionCookie({ sub: updated.id, role: "OWNER", name: updated.name, ver: updated.session_version });
   return { success: "Contraseña cambiada. Cerramos la sesión en tus otros dispositivos." };

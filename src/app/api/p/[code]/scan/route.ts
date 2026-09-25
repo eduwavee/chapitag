@@ -17,7 +17,7 @@ export async function POST(
   const ua = request.headers.get("user-agent") ?? "";
   if (BOT_UA.test(ua)) return new NextResponse(null, { status: 204 });
 
-  const view = lookupTag(code);
+  const view = await lookupTag(code);
   if (view.state !== "assigned") return new NextResponse(null, { status: 204 });
   const { pet, tag } = view;
 
@@ -33,7 +33,7 @@ export async function POST(
     return new NextResponse(null, { status: 204 });
   }
 
-  const scan = recordScan({ petId: pet.id, tagCode: tag.code, kind: "view" });
+  const scan = await recordScan({ petId: pet.id, tagCode: tag.code, kind: "view" });
   const panelUrl = `${await getBaseUrl()}/panel/mascotas/${pet.id}`;
   after(() => notifyOwnerOfScan(pet, scan, panelUrl));
 

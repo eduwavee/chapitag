@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { get, run } from "@/lib/db";
 import { newId } from "@/lib/ids";
 
 export interface AdminRow {
@@ -10,40 +10,40 @@ export interface AdminRow {
   created_at: string;
 }
 
-export function findAdminByEmail(email: string): AdminRow | undefined {
-  return db
-    .prepare("SELECT * FROM admin_users WHERE email = ?")
-    .get(email.trim().toLowerCase()) as AdminRow | undefined;
+export async function findAdminByEmail(email: string): Promise<AdminRow | undefined> {
+  return get<AdminRow>("SELECT * FROM admin_users WHERE email = ?", email.trim().toLowerCase());
 }
 
-export function findAdminById(id: string): AdminRow | undefined {
-  return db.prepare("SELECT * FROM admin_users WHERE id = ?").get(id) as
-    | AdminRow
-    | undefined;
+export async function findAdminById(id: string): Promise<AdminRow | undefined> {
+  return get<AdminRow>("SELECT * FROM admin_users WHERE id = ?", id);
 }
 
-export function countAdmins(): number {
-  const row = db
-    .prepare("SELECT COUNT(*) as c FROM admin_users")
-    .get() as { c: number };
-  return row.c;
+export async function countAdmins(): Promise<number> {
+  const row = await get<{ c: number }>("SELECT COUNT(*) as c FROM admin_users");
+  return row?.c ?? 0;
 }
 
-export function createAdmin(input: {
+export async function createAdmin(input: {
   email: string;
   passwordHash: string;
   name: string;
-}): AdminRow {
+}): Promise<AdminRow> {
   const id = newId();
-  db.prepare(
-    `INSERT INTO admin_users (id, email, password_hash, name) VALUES (?, ?, ?, ?)`
-  ).run(id, input.email.trim().toLowerCase(), input.passwordHash, input.name.trim());
-  return findAdminByEmail(input.email)!;
+  await run(
+    `INSERT INTO admin_users (id, email, password_hash, name) VALUES (?, ?, ?, ?)`,
+    id,
+    input.email.trim().toLowerCase(),
+    input.passwordHash,
+    input.name.trim()
+  );
+  return (await findAdminByEmail(input.email))!;
 }
 
-export function updateAdminPassword(id: string, passwordHash: string): AdminRow {
-  db.prepare(
-    `UPDATE admin_users SET password_hash = ?, session_version = session_version + 1 WHERE id = ?`
-  ).run(passwordHash, id);
-  return findAdminById(id)!;
+export async function updateAdminPassword(id: string, passwordHash: string): Promise<AdminRow> {
+  await run(
+    `UPDATE admin_users SET password_hash = ?, session_version = session_version + 1 WHERE id = ?`,
+    passwordHash,
+    id
+  );
+  return (await findAdminById(id))!;
 }

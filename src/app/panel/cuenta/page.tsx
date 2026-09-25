@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Mi cuenta" };
 export default async function CuentaPage() {
   const session = await requireOwnerSession();
   if (!session) redirect("/ingresar");
-  const user = findUserById(session.sub);
+  const user = await findUserById(session.sub);
   if (!user) redirect("/ingresar");
 
   return (

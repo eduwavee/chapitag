@@ -15,7 +15,7 @@ type Props = { params: Promise<{ code: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { code } = await params;
-  const view = getTagView(code);
+  const view = await getTagView(code);
   // Los perfiles tienen teléfonos: fuera de los buscadores siempre.
   const robots = { index: false, follow: false };
 
@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PublicPetPage({ params }: Props) {
   const { code } = await params;
-  const view = getTagView(code);
+  const view = await getTagView(code);
 
   if (view.state === "missing") notFound();
 
